@@ -12,7 +12,7 @@ class ProductController extends BaseController
   function show($id)
   {
     $product = Product::getById($id);
-    $this->sendOutput($product);
+    $this->sendOutput($product->getAttributes());
   }
 
   function create()

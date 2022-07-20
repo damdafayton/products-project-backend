@@ -10,3 +10,4 @@ require_once PROJECT_ROOT_PATH . "/controllers/productController.php";
 
 // include the product model file
 require_once PROJECT_ROOT_PATH . "/model/product.php";
+require_once PROJECT_ROOT_PATH . "/model/book.php";

@@ -1,33 +1,22 @@
 <?php
 require_once PROJECT_ROOT_PATH . './model/database.php';
-require_once PROJECT_ROOT_PATH . './model/classMethods.php';
+require_once PROJECT_ROOT_PATH . './model/staticClassMethods.php';
 
 abstract class Product extends Database
 {
-  use classMethods;
+  use staticClassMethods;
   static $tableName = 'products';
 
-  protected $id;
+  protected $attributes;
 
-  function __construct($SKU, $name, $price, $description = null)
+  function __construct($sqlResponse)
   {
-    // CREATE NEW PRODUCT, RETURN DETAILS 
+    parent::__construct();
+    $this->attributes = $sqlResponse;
   }
 
-  function getId()
+  function getAttributes()
   {
-    return $this->id;
-  }
-
-  function setSKU()
-  {
-  }
-
-  function setName()
-  {
-  }
-
-  function setPrice()
-  {
+    return $this->attributes;
   }
 }

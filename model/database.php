@@ -47,6 +47,7 @@ abstract class Database
   private function executeStatement($query = "", $params = [])
   {
     try {
+      echo $query;
       $stmt = $this->connection->prepare($query);
 
       if ($stmt === false) {
