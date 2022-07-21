@@ -2,30 +2,22 @@
 trait ParentMethods
 {
   /**
-   * $mainTable must be defined in child classes.
-   * static functions which query the database
-   * methods are under trait in case in the future we add main classes other than Product
+   * Static parent functions
+   * These methods are kept here in case in the future we add new parent classes such as Users, Customers
    */
 
   static function all()
   // Returns sql query result.
   {
-    $_mainTable = self::MAIN_TABLE;
-    $_childTable = defined('CHILD_TABLE') ? self::CHILD_TABLE : null;
-    if ($_childTable) {
-      return self::select(
-        "SELECT * FROM $_mainTable WHERE category = ? ORDER BY product_id",
-        ['s', $_childTable]
-      );
-    } else {
-      return self::select("SELECT * FROM $_mainTable ORDER BY product_id");
-    }
+    $_mainTable = strtolower(__CLASS__) . 's';
+    return self::select("SELECT * FROM $_mainTable ORDER BY product_id");
   }
 
-  static function _getById($id)
+  static function getById($id)
   // Returns instance of correct product model.
   {
-    $_mainTable = self::MAIN_TABLE;
+    $_mainTable = strtolower(__CLASS__) . 's';
+
     $sqlQueryResult =  self::executeMultiQuery(
       "
           SET @category_table_name:= (SELECT category FROM $_mainTable where product_id = $id);
@@ -35,17 +27,21 @@ trait ParentMethods
           DEALLOCATE PREPARE dynamic_statement;"
     );
 
-    $category = $sqlQueryResult['category']; // books
-    $Model = tableToClassName($category); // Book
+    if ($sqlQueryResult) {
+      $category = $sqlQueryResult['category']; // books
+      $Model = tableToClassName($category); // Book
 
-    $modelInstance = new $Model($sqlQueryResult);
+      $modelInstance = new $Model($sqlQueryResult);
 
-    return $modelInstance;
+      return $modelInstance;
+    } else {
+      // handle null return
+    }
   }
 
   static function massDelete($productListToDelete = [])
   {
-    $_mainTable = self::MAIN_TABLE;
+    $_mainTable = strtolower(__CLASS__) . 's';
     foreach ($productListToDelete as $productId) {
       $query = "
         SET @category_table_name:= (SELECT category FROM $_mainTable where product_id = $productId);

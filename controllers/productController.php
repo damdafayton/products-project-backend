@@ -13,7 +13,9 @@ class ProductController extends BaseController
   {
     $product = Product::getById($id);
 
-    $this->sendOutput($product->getAttributes());
+    if ($product) {
+      $this->sendOutput($product->getAttributes());
+    }
   }
 
   function create()

@@ -5,7 +5,6 @@ require_once PROJECT_ROOT_PATH . './model/database.php';
 abstract class Product extends Database
 {
   use ParentMethods;
-  const MAIN_TABLE = 'products';
 
   protected $product_id;
   protected $sku;
@@ -44,7 +43,7 @@ abstract class Product extends Database
 
   function save()
   {
-    $_mainTable = self::MAIN_TABLE;
+    $_mainTable = strtolower(__CLASS__) . 's';
 
     [
       'sku' => $sku, 'name' => $name, 'price' => $price,

@@ -36,12 +36,12 @@ trait ChildMethods
       $qMarkForExtraFields = str_repeat(", ?", count($privateFieldValues));
       echo $privateFieldsStringified, $qMarkForExtraFields;
       // $weight = $this->weight;
-      $_tableName = self::CHILD_TABLE;
+      $_tableName = strtolower(__CLASS__) . 's';
       $_privateFieldDataTypes = $this->privateFieldDataTypes;
 
       $stmtResult = $this->insert(
         "INSERT INTO $_tableName (product_id, $privateFieldsStringified) VALUES (?$qMarkForExtraFields);",
-        [$_privateFieldDataTypes, $insert_id, ...$privateFieldValues]
+        ['s' . $_privateFieldDataTypes, $insert_id, ...$privateFieldValues]
       );
 
       ['insert_id' => $insert_id, 'error' => $error] = $stmtResult;
@@ -50,5 +50,17 @@ trait ChildMethods
       }
       return $error;
     }
+  }
+
+  static function all()
+  // Returns sql query result.
+  {
+    $_categoryTable = strtolower(__CLASS__) . 's';
+    $_mainTable = strtolower(get_parent_class(__CLASS__)) . 's';
+
+    return self::select(
+      "SELECT * FROM $_mainTable WHERE category = ? ORDER BY product_id",
+      ['s', $_categoryTable]
+    );
   }
 }
