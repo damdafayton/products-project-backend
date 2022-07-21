@@ -1,23 +1,21 @@
 <?php
-class Book extends Product
+class Dvd extends Product
 {
-  private const CHILD_TABLE = 'books';
-  use Weight;
+  private const CHILD_TABLE = 'dvds';
+  use Size;
   use ChildMethods;
-
 
   function save()
   {
     $insert_id = parent::save();
 
     if ($insert_id) {
-      $weight = $this->weight;
+      $size = $this->size;
       $_tableName = self::CHILD_TABLE;
 
-      $stmtResult = $this->insert(
-        "INSERT INTO $_tableName (product_id, weight) VALUES (?, ?);",
-        ['ss', $insert_id, $weight]
-      );
+      $stmtResult = $this->insert("INSERT INTO $_tableName (product_id, size) VALUES (?, ?);", [
+        'si', $insert_id, $size
+      ]);
 
       ['insert_id' => $insert_id, 'error' => $error] = $stmtResult;
       if ($insert_id) {

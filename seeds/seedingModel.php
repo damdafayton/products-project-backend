@@ -9,7 +9,7 @@ class Seeding extends Database
   {
     $result = null;
     foreach ($listOfQueries as $query) {
-      $result = $this->createOrInsert($query);
+      $result = self::insert($query);
       if (!$result) {
         continue;
       }
@@ -21,7 +21,7 @@ class Seeding extends Database
   {
     $result = null;
     foreach ($listOfMulipleQueries as $query) {
-      $result = $this->executeMultiQuery($query);
+      $result = self::executeMultiQuery($query);
       if (!$result) {
         continue;
       }

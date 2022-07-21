@@ -5,7 +5,7 @@ require __DIR__ . "/config/bootstrap.php";
 $baseController = new BaseController();
 
 $uriSegmentList = $baseController->getUriSegmentList();
-
+// print_r($uriSegmentList);
 $targetPathOffset = 2;
 $Class = null;
 $id = null;
@@ -15,8 +15,10 @@ if (isset($uriSegmentList[$targetPathOffset + 1]) && $uriSegmentList[$targetPath
   if (isset($uriSegmentList[$targetPathOffset + 2]) && $uriSegmentList[$targetPathOffset + 2]) {
     $id = $uriSegmentList[$targetPathOffset + 2];
   }
-  $path = $uriSegmentList[$targetPathOffset + 1]; // products || pRoDucTS
-  $Class = ucwords(strtolower(($path))); // Products
+  $commandPathList = explode(':', $uriSegmentList[$targetPathOffset + 1]); // ['products, 'massDelete']
+  $mainPath = $commandPathList[0]; // products || pRoDucTS
+  $command = isset($commandPathList[1]) ? $commandPathList[1] : null;
+  $Class = ucwords(strtolower(($mainPath))); // Products
   $Class = substr($Class, 0, strlen($Class) - 1); // Product
   $DynamicController = $Class . 'Controller'; // ProductController
 }
@@ -32,14 +34,18 @@ if (class_exists($Class) && class_exists($DynamicController)) {
       }
       break;
     case 'POST':
+      if ($command) { // Check for mass operations
+        $instance->massOperations($Class, $command);
+        break;
+      };
       $instance->create();
       break;
-    case 'PUT':
-      $instance->edit();
-      break;
-    case 'DELETE':
-      $instance->destroy();
-      break;
+      // case 'PUT':
+      //   $instance->edit();
+      //   break;
+      // case 'DELETE':
+      //   $instance->destroy();
+      //   break;
     default:
       $instance->noAction();
   };
@@ -49,5 +55,4 @@ if (class_exists($Class) && class_exists($DynamicController)) {
 }
 
 ?>
-<p><?php print_r($uriSegmentList); ?></p>
-<p><?php echo $path . ' / ' . $id ?></p>
+<p>END OF PAGE</p>

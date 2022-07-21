@@ -18,12 +18,29 @@ class ProductController extends BaseController
   function create()
   {
     echo 'POST REQUEST RECEIEVED';
+
     try {
-      ['category' => $category, 'SKU' => $SKU, 'name' => $name, 'price' => $price, 'description' => $description] = $_POST;
-      // echo $SKU, $name, $price;
-      // $newProduct = new Product($SKU, $name, $price, $description);
+      ['category' => $category] = $_POST;
+      $Model = tableToClassName($category);
+
+      if (class_exists($Model)) {
+        $newEntry = new $Model($_POST);
+        // print_r($newEntry->getAttributes());
+        $result = $newEntry->save();
+        print_r($result);
+      } else {
+        print '</br>Missing data!';
+      }
     } catch (Exception $e) {
-      throw new Exception($e->getMessage());
+      // throw new Exception($e->getMessage());
     }
+  }
+
+  function massOperations($Class, $command)
+  {
+    echo "</br>MASS OPERATION REQUEST RECEIEVED </br>";
+    ['list' => $list] = $_POST;
+    $result = $Class::$command(json_decode($list));
+    print_r($result);
   }
 }
