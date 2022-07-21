@@ -44,7 +44,7 @@ abstract class Database
   protected static function insert($query = "", $params = [])
   {
     try {
-      // echo $query;
+      echo $query;
       $stmt = self::executeStatement($query, $params);
       $result = serialize($stmt);
       $result = ['insert_id' => $stmt->insert_id, 'error' => $stmt->error];

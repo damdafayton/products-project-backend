@@ -3,7 +3,8 @@ trait ParentMethods
 {
   /**
    * $mainTable must be defined in child classes.
-   * static functions which query the database and return the correct instance
+   * static functions which query the database
+   * methods are under trait in case in the future we add main classes other than Product
    */
 
   static function all()
@@ -21,9 +22,8 @@ trait ParentMethods
     }
   }
 
-  static function getById($id)
+  static function _getById($id)
   // Returns instance of correct product model.
-  // Only runs from Product class.
   {
     $_mainTable = self::MAIN_TABLE;
     $sqlQueryResult =  self::executeMultiQuery(
@@ -39,6 +39,7 @@ trait ParentMethods
     $Model = tableToClassName($category); // Book
 
     $modelInstance = new $Model($sqlQueryResult);
+
     return $modelInstance;
   }
 
