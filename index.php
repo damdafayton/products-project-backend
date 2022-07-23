@@ -1,12 +1,10 @@
-<p style="text-align: center;">SCANDIWEB TEST TASK</p>
 <?php
 require __DIR__ . "/config/bootstrap.php";
 
 $baseController = new BaseController();
 
 $uriSegmentList = $baseController->getUriSegmentList();
-// print_r($uriSegmentList);
-$targetPathOffset = 2;
+$targetPathOffset = 3; // /test-scandiweb-products/index.php/api
 $Class = null;
 $id = null;
 
@@ -22,7 +20,7 @@ if (isset($uriSegmentList[$targetPathOffset + 1]) && $uriSegmentList[$targetPath
   $Class = substr($Class, 0, strlen($Class) - 1); // Product
   $DynamicController = $Class . 'Controller'; // ProductController
 }
-
+// Check if we have the corresponding contoller class
 if (class_exists($Class) && class_exists($DynamicController)) {
   $instance = new $DynamicController();
   switch ($_SERVER['REQUEST_METHOD']) {
@@ -53,6 +51,3 @@ if (class_exists($Class) && class_exists($DynamicController)) {
   header("HTTP/1.1 404 Not Found");
   exit();
 }
-
-?>
-<p>END OF PAGE</p>

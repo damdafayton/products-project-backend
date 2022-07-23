@@ -48,11 +48,8 @@ class BaseController
       }
     }
 
-    if (is_array($data)) {
-      print_r($data);
-    } else {
-      echo $data;
-    }
+    echo json_encode($data);
+
     exit;
   }
 }

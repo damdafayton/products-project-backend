@@ -6,7 +6,8 @@ class ProductController extends BaseController
   function index()
   {
     $products = Product::all();
-    $this->sendOutput($products);
+    // print_r(json_encode($products));
+    $this->sendOutput($products, ["Content-Type: application/json; charset=UTF-8"]);
   }
 
   function show($id)
