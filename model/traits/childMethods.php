@@ -34,8 +34,7 @@ trait ChildMethods
 
       $privateFieldsStringified = join(', ', $this->privateFields);
       $qMarkForExtraFields = str_repeat(", ?", count($privateFieldValues));
-      echo $privateFieldsStringified, $qMarkForExtraFields;
-      // $weight = $this->weight;
+
       $_tableName = strtolower(__CLASS__) . 's';
       $_privateFieldDataTypes = $this->privateFieldDataTypes;
 
@@ -48,7 +47,7 @@ trait ChildMethods
       if ($insert_id) {
         return $this->getAttributes();
       }
-      return $error;
+      return ["error" => $error];
     }
   }
 
@@ -58,9 +57,17 @@ trait ChildMethods
     $_categoryTable = strtolower(__CLASS__) . 's';
     $_mainTable = strtolower(get_parent_class(__CLASS__)) . 's';
 
-    return self::select(
+    $allProductsUnderCategory = self::select(
       "SELECT * FROM $_mainTable WHERE category = ? ORDER BY product_id",
       ['s', $_categoryTable]
     );
+
+    $getPrivateFields = function ($product) {
+      $categoryTable = $product['category'];
+      $productId = $product['product_id'];
+      $productSpecialFields = self::select("SELECT * from $categoryTable WHERE product_id = ?", ['s', $productId]);
+      return array_merge($product, $productSpecialFields[0]);
+    };
+    return array_map($getPrivateFields, $allProductsUnderCategory);
   }
 }

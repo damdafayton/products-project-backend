@@ -1,6 +1,4 @@
 <?php
-require_once PROJECT_ROOT_PATH . './helpers/utils.php';
-
 abstract class Database
 {
   protected static $connection = null;
@@ -44,7 +42,7 @@ abstract class Database
   protected static function insert($query = "", $params = [])
   {
     try {
-      echo $query;
+      // echo $query;
       $stmt = self::executeStatement($query, $params);
       $result = serialize($stmt);
       $result = ['insert_id' => $stmt->insert_id, 'error' => $stmt->error];
@@ -100,12 +98,15 @@ abstract class Database
             printf("%s\n", $row[0]);
           }
         }
-        /* print divider */
+        // print_r($con);
         if ($con->more_results()) {
-          printf("-----------------\n");
+          // printf("-----------------\n");
         }
       } while ($con->next_result());
-      return $response;
+
+      // If this is not a select query but delete operation, return affected rows instead of query result
+      $affected_rows = $con->affected_rows;
+      return $response ? $response : ['affected_rows' => $affected_rows];
     } catch (Exception $e) {
       throw new Exception($e->getMessage());
     }

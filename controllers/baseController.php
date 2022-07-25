@@ -27,9 +27,10 @@ class BaseController
    * 
    * @return array
    */
-  protected function getQueryStringParams()
+  function getQueryStringParams()
   {
-    return parse_str($_SERVER['QUERY_STRING'], $query);
+    parse_str($_SERVER['QUERY_STRING'], $queryList);
+    return $queryList;
   }
 
   /**
@@ -41,6 +42,7 @@ class BaseController
   protected function sendOutput($data, $httpHeaders = array())
   {
     header_remove('Set-Cookie');
+    header("Content-Type: application/json; charset=UTF-8");
 
     if (is_array($httpHeaders) && count($httpHeaders)) {
       foreach ($httpHeaders as $httpHeader) {
@@ -51,5 +53,39 @@ class BaseController
     echo json_encode($data);
 
     exit;
+  }
+
+  function index()
+  {
+    $Model = substr(get_class($this), 0, -10); // ProductController to Product
+    $queryResult = $Model::all();
+    // print_r(json_encode($queryResult));
+    $this->sendOutput($queryResult);
+  }
+
+  function show($id)
+  {
+    $Model = substr(get_class($this), 0, -10); // ProductController to Product
+    $product = $Model::getById($id);
+
+    if ($product) {
+      $this->sendOutput($product->getAttributes());
+    }
+  }
+
+  function massOperations($command)
+  {
+    $string = file_get_contents("php://input");
+    if ($string === false) {
+      // deal with error...
+    }
+    $json = json_decode($string, true);
+    ['list' => $list] = $json;
+
+    $Model = substr(get_class($this), 0, -10); // ProductController to Product
+
+    $result = $Model::$command(json_decode($list));
+    // print_r($result);
+    $this->sendOutput($result);
   }
 }

@@ -1,27 +1,30 @@
 <?php
 $categoryCreateTableQueries = [
+  "DROP TABLE IF EXISTS `books`;",
   "CREATE TABLE IF NOT EXISTS `books` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `product_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
-  `weight` decimal(6,2) UNSIGNED NOT NULL DEFAULT '0.00',
+  `weight` decimal(6,2) UNSIGNED NOT NULL DEFAULT '0.00' COMMENT 'kg',
   PRIMARY KEY (`id`),
   KEY `product_id` (`product_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ",
+  "DROP TABLE IF EXISTS `dvds`;",
   "CREATE TABLE IF NOT EXISTS `dvds` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `product_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
-  `size` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
+  `size` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'mb',
   PRIMARY KEY (`id`),
   KEY `product_id` (`product_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ",
+  "DROP TABLE IF EXISTS `furnitures`;",
   "CREATE TABLE IF NOT EXISTS `furnitures` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `product_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
-  `height` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `width` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `length` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `height` int(10) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'cm',
+  `width` int(10) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'cm',
+  `length` int(10) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'cm',
   PRIMARY KEY (`id`),
   KEY `product_id` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

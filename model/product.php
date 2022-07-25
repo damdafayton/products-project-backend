@@ -1,11 +1,7 @@
 <?php
-// Keep this for seeding model.
-require_once PROJECT_ROOT_PATH . './model/database.php';
 
 abstract class Product extends Database
 {
-  use ParentMethods;
-
   protected $product_id;
   protected $sku;
   protected $name;
@@ -13,7 +9,7 @@ abstract class Product extends Database
   protected $description;
   protected $category;
 
-  function __construct($sqlResponse)
+  function __construct($modelData)
   {
     parent::__construct();
 
@@ -21,12 +17,13 @@ abstract class Product extends Database
     /* So sterilize the incoming data.
     */
     try {
-      $this->sku = $sqlResponse['sku'];
-      $this->name = $sqlResponse['name'];
-      $this->price = $sqlResponse['price'];
-      $this->description = $sqlResponse['description'];
-      $this->category = $sqlResponse['category'];
-      $this->product_id = $sqlResponse['product_id'];
+      $this->sku = $modelData['sku'];
+      $this->name = $modelData['name'];
+      $this->price = $modelData['price'];
+      $this->description = $modelData['description'];
+      $this->category = $modelData['category'];
+      // In new products there is on product_id until save()
+      $this->product_id = isset($modelData['product_id']) ? $modelData['product_id'] : null;
     } catch (Exception $e) {
       // throw new Exception($e->getMessage());
     }
@@ -60,8 +57,121 @@ abstract class Product extends Database
       return $insert_id;
     } else if ($error) {
       // Handle error notifications.
-      echo $error;
-      return 0;
+      return $error;
+    }
+  }
+
+  // Query methods are static
+
+  static function all()
+  // Returns sql query result.
+  {
+    $_mainTable = strtolower(__CLASS__) . 's';
+    $allProducts =  self::select("SELECT * FROM $_mainTable ORDER BY product_id");
+    $getPrivateFields = function ($product) {
+      $categoryTable = $product['category'];
+      $productId = $product['product_id'];
+      $productSpecialFields = self::select("SELECT * from $categoryTable WHERE product_id = ?", ['s', $productId]);
+      $productSpecialFields = count($productSpecialFields) > 0 ? $productSpecialFields[0] : [];
+      return array_merge($product, $productSpecialFields);
+    };
+    return array_map($getPrivateFields, $allProducts);
+  }
+
+  static function getById($id)
+  // Returns instance of correct product model.
+  {
+    $_mainTable = strtolower(__CLASS__) . 's';
+
+    $sqlQueryResult =  self::executeMultiQuery(
+      "
+          SET @category_table_name:= (SELECT category FROM $_mainTable where product_id = $id);
+          SET @sql:= CONCAT('SELECT * FROM $_mainTable LEFT JOIN ', @category_table_name,' ON products.product_id = ', @category_table_name, '.product_id', ' WHERE products.product_id = $id');
+          PREPARE dynamic_statement FROM @sql;
+          EXECUTE dynamic_statement;
+          DEALLOCATE PREPARE dynamic_statement;"
+    );
+
+    if ($sqlQueryResult) {
+      $category = $sqlQueryResult['category']; // books
+      $Model = tableToClassName($category); // Book
+
+      $modelInstance = new $Model($sqlQueryResult);
+
+      return $modelInstance;
+    } else {
+      // handle null return
+    }
+  }
+
+  static function massDelete($productListToDelete = [])
+  {
+    $_mainTable = strtolower(__CLASS__) . 's';
+    $response = null; // set before in case empty list is provided
+    foreach ($productListToDelete as $productId) {
+      $query = "
+        SET @category_table_name:= (SELECT category FROM $_mainTable where product_id = $productId);
+        SET @sql:= CONCAT('DELETE FROM ', @category_table_name,' WHERE product_id = $productId');
+        PREPARE dynamic_statement FROM @sql;
+        EXECUTE dynamic_statement;
+        DEALLOCATE PREPARE dynamic_statement;
+        DELETE FROM $_mainTable WHERE product_id = $productId; 
+        ";
+      $response = self::executeMultiQuery($query);
+    }
+    return $response;
+  }
+
+  static function getFields($category = null)
+  {
+    // Query the database to extract categories. 
+    // Each category must have at least 1 item for it to work.
+
+    function filterNecessaryFieldNames($column)
+    {
+      $unNeccessaryFieldNames = ['product_id', 'id', 'category'];
+      $fieldName = $column['Field'];
+
+      return !in_array($fieldName, $unNeccessaryFieldNames);
+    }
+
+    function mapColumnToFieldName($column)
+    {
+      return $column['Field'];
+    }
+
+    function mapFieldToComments($column)
+    {
+      return [$column['Field'], $column['Comment']];
+    }
+
+    function isItCategoryColumn($column)
+    {
+      return $column['Field'] == 'category';
+    }
+
+    $tableName = strtolower(__CLASS__) . 's';
+
+    if ($category) {
+      // If category is given, return the fields of that category
+      $query = "SHOW FULL COLUMNS FROM $category";
+      $showColumns = self::select($query);
+      // print_r($showColumns);
+      $categoryFields = array_values(array_map('mapFieldToComments', array_filter($showColumns, 'filterNecessaryFieldNames')));
+      // print_r($categoryFields);
+      return ['categoryFields' => $categoryFields];
+    } else {
+      $query = "SHOW COLUMNS FROM $tableName";
+      $showColumns = self::select($query);
+      // print_r($showColumns);
+      $commonFields = array_values(array_map('mapColumnToFieldName', array_filter($showColumns, 'filterNecessaryFieldNames')));
+      // print_r($commonFields);
+      // extract categories from enums of products
+      $categoriesEnumString = array_values(array_filter($showColumns, 'isItCategoryColumn'))[0]['Type']; // "enum('books','dvds','furnitures')"
+      $categoriesEnumString = str_replace('\'', '', $categoriesEnumString); // "enum(books,dvds,furnitures)"
+      $categoriesList = explode(',', substr($categoriesEnumString, 5, (strlen($categoriesEnumString) - 6)));
+
+      return ['commonFields' => $commonFields, 'categoryList' => $categoriesList];
     }
   }
 }

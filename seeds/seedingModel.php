@@ -13,7 +13,7 @@ class Seeding extends Database
       if (!$result) {
         continue;
       }
-      echo $result;
+      print_r($result);
     }
   }
 
@@ -25,7 +25,7 @@ class Seeding extends Database
       if (!$result) {
         continue;
       }
-      echo $result;
+      print_r($result);
     }
   }
 }

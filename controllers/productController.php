@@ -3,48 +3,39 @@ require_once PROJECT_ROOT_PATH . "/controllers/baseController.php";
 
 class ProductController extends BaseController
 {
-  function index()
-  {
-    $products = Product::all();
-    // print_r(json_encode($products));
-    $this->sendOutput($products, ["Content-Type: application/json; charset=UTF-8"]);
-  }
-
-  function show($id)
-  {
-    $product = Product::getById($id);
-
-    if ($product) {
-      $this->sendOutput($product->getAttributes());
-    }
-  }
-
   function create()
   {
-    echo 'POST REQUEST RECEIEVED';
-
     try {
-      ['category' => $category] = $_POST;
+      $string = file_get_contents("php://input");
+      if ($string === false) {
+        // deal with error...
+      }
+      $json = json_decode($string, true);
+      ['category' => $category] = $json;
+
       $Model = tableToClassName($category);
 
       if (class_exists($Model)) {
-        $newEntry = new $Model($_POST);
-        // print_r($newEntry->getAttributes());
+        $newEntry = new $Model($json);
         $result = $newEntry->save();
-        print_r($result);
+
+        $this->sendOutput($result);
       } else {
-        print '</br>Missing data!';
+        $this->sendOutput(["error" => "Missing data!"]);
       }
     } catch (Exception $e) {
       // throw new Exception($e->getMessage());
     }
   }
 
-  function massOperations($Class, $command)
+  function handleQueries()
   {
-    echo "</br>MASS OPERATION REQUEST RECEIEVED </br>";
-    ['list' => $list] = $_POST;
-    $result = $Class::$command(json_decode($list));
-    print_r($result);
+    $Model = substr(get_class($this), 0, -10); // ProductController to Product
+    $queryList = $this->getQueryStringParams();
+    if (array_key_exists('fields', $queryList)) {
+      $fields = $Model::getFields($queryList['fields']);
+      $this->sendOutput($fields);
+      // print_r($fields);
+    }
   }
 }
