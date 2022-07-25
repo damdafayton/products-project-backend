@@ -2,7 +2,15 @@
 
 ## Built With
 
-- PHP
+- PHP7, MySQL
+
+## How to Run
+
+- Clone the backend repo to your php server
+- Run your server
+- Hit `{WWW_THIS_APP}/seeds/categories.php` on your browser to create category tables
+- Hit `{WWW_THIS_APP}/seeds/products.php` to seed your tables with dummy data
+
 
 ## Authors
 
