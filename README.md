@@ -14,12 +14,12 @@
 
 ## End-points
 
-GET `/api/products/` => retrieves all the products
-GET `/api/products/{productId}` => retrieves product with the given `productId`
-POST `/api/products` => creates a product
-POST `/api/products:massDelete` => deletes more than 1 product
-GET `/api/products?fields` => retrieves the list of categories
-GET `/api/products?fields={fieldName}` => retrievese special attributes of the given `fieldName`
+- GET `/api/products/` => retrieves all the products
+- GET `/api/products/{productId}` => retrieves product with the given `productId`
+- POST `/api/products` => creates a product
+- POST `/api/products:massDelete` => deletes more than 1 product
+- GET `/api/products?fields` => retrieves the list of categories
+- GET `/api/products?fields={fieldName}` => retrievese special attributes of the given `fieldName`
 
 ## Authors
 
