@@ -12,18 +12,18 @@ abstract class Database
   {
     try {
       if (self::$connection == NULL) {
-        self::$connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE_NAME);
+        // self::$connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE_NAME);
 
         //Get Heroku ClearDB connection information
-        // $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
-        // $cleardb_server = $cleardb_url["host"];
-        // $cleardb_username = $cleardb_url["user"];
-        // $cleardb_password = $cleardb_url["pass"];
-        // $cleardb_db = substr($cleardb_url["path"], 1);
-        // $active_group = 'default';
-        // $query_builder = TRUE;
-        // // Connect to DB
-        // self::$connection = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
+        $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+        $cleardb_server = $cleardb_url["host"];
+        $cleardb_username = $cleardb_url["user"];
+        $cleardb_password = $cleardb_url["pass"];
+        $cleardb_db = substr($cleardb_url["path"], 1);
+        $active_group = 'default';
+        $query_builder = TRUE;
+        // Connect to DB
+        self::$connection = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
 
 
         if (mysqli_connect_errno()) {
