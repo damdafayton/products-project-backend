@@ -2,7 +2,7 @@
 
 ## Built With
 
-- PHP7, MySQL
+- PHP7, MySQL5
 
 ## How to Run
 
