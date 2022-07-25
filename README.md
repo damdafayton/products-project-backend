@@ -36,10 +36,10 @@ All the data that is served in the front-end is served from the back-end, hence 
 - BaseController
   - ProductController
 
-It is very easy to create new category classes.
-- First special field traits are imported depending on the features of the product such as: size, weight, length etc...
-- Then common methods are imported from another trait.
-- Then it's needed to define the name of special field traits and their data-types to feed mysql.
+It is very easy to create a new category class.
+1) Special field traits are imported depending on the features of the product such as: size, weight, length etc...
+2) Common methods are imported from another trait.
+3) It's required to define the name of special fields and their data-types in an array to feed mysql.
 Here is an example.
 ```
 <?php
