@@ -2,7 +2,7 @@
 
 ## Built With
 
-- PHP7, MySQL
+- PHP7, MySQL5
 
 ## How to Run
 
@@ -14,7 +14,7 @@
 
 ## End-points
 
-All the data that is served in the front-end is served from the back-end, hence tha application has single source of truth.
+All the data that is served on the front-end is provided from the back-end, hence tha application has single source of truth.
 
 - GET `/api/products` => retrieves all the products
 - GET `/api/products/{productId}` => retrieves product with the given `productId`
