@@ -23,7 +23,7 @@ abstract class Database
         $active_group = 'default';
         $query_builder = TRUE;
         // Connect to DB
-        self::$connection = mysqli_connect($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
+        self::$connection = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
 
 
         if (mysqli_connect_errno()) {
