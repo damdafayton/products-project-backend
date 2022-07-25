@@ -1,5 +1,4 @@
 <?php
-require_once PROJECT_ROOT_PATH . "/controllers/baseController.php";
 
 class ProductController extends BaseController
 {
