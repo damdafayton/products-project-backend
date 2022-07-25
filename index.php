@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
 require __DIR__ . "/config/bootstrap.php";
 
 $baseController = new BaseController();
