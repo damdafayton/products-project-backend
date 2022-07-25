@@ -18,7 +18,6 @@ require_once PROJECT_ROOT_PATH . "/model/book.php";
 require_once PROJECT_ROOT_PATH . "/model/dvd.php";
 require_once PROJECT_ROOT_PATH . "/model/furniture.php";
 
-
 // include the base controller file
 require_once PROJECT_ROOT_PATH . "/controllers/baseController.php";
 require_once PROJECT_ROOT_PATH . "/controllers/productController.php";

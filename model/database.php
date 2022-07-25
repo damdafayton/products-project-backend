@@ -27,11 +27,11 @@ abstract class Database
 
 
         if (mysqli_connect_errno()) {
-          throw new Exception("Could not connect to database.");
+          // throw new Exception("Could not connect to database.");
         }
       }
     } catch (Exception $e) {
-      throw new Exception($e->getMessage());
+      // throw new Exception($e->getMessage());
     }
   }
 
