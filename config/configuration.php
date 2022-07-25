@@ -9,4 +9,4 @@ define("DB_DATABASE_NAME", "test_scandiweb_products");
 // define("DB_PASSWORD", "55e8369f");
 // define("DB_DATABASE_NAME", "heroku_37d1f22892a0b4d");
 
-// putenv('CLEARDB_DATABASE_URL=mysql://b5c65dcef23a4c:55e8369f@us-cdbr-east-06.cleardb.net/heroku_37d1f22892a0b4d?reconnect=true');
+putenv('CLEARDB_DATABASE_URL=mysql://b5c65dcef23a4c:55e8369f@us-cdbr-east-06.cleardb.net/heroku_37d1f22892a0b4d?reconnect=true');
