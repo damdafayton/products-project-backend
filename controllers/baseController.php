@@ -59,25 +59,23 @@ class BaseController
   {
     $Model = substr(get_class($this), 0, -10); // ProductController to Product
     $queryResult = $Model::all();
-    // print_r(json_encode($queryResult));
+
     $this->sendOutput($queryResult);
   }
 
   function show($id)
   {
     $Model = substr(get_class($this), 0, -10); // ProductController to Product
-    $product = $Model::getById($id);
+    $instance = $Model::getById($id);
 
-    if ($product) {
-      $this->sendOutput($product->getAttributes());
-    }
+    return $instance;
   }
 
   function massOperations($command)
   {
     $string = file_get_contents("php://input");
     if ($string === false) {
-      // deal with error...
+      $this->sendOutput(["error" => "Send data in JSON format."]);
     }
     $json = json_decode($string, true);
     ['list' => $list] = $json;

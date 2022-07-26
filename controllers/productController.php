@@ -2,16 +2,24 @@
 
 class ProductController extends BaseController
 {
+  function show($id)
+  {
+    $instance = parent::show($id);
+
+    if ($instance) {
+      $this->sendOutput($instance->getAttributes());
+    }
+  }
+
   function create()
   {
     try {
       $string = file_get_contents("php://input");
       if ($string === false) {
-        // deal with error...
+        $this->sendOutput(["error" => "Send data in JSON format."]);
       }
       $json = json_decode($string, true);
       ['category' => $category] = $json;
-
       $Model = tableToClassName($category);
 
       if (class_exists($Model)) {
@@ -34,7 +42,6 @@ class ProductController extends BaseController
     if (array_key_exists('fields', $queryList)) {
       $fields = $Model::getFields($queryList['fields']);
       $this->sendOutput($fields);
-      // print_r($fields);
     }
   }
 }
