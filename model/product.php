@@ -61,7 +61,7 @@ abstract class Product extends Database
     }
   }
 
-  // Query methods are static
+  // QUERY METHODS ARE STATIC
 
   static function all()
   // Returns sql query result.
@@ -124,10 +124,7 @@ abstract class Product extends Database
 
   static function getFields($category = null)
   {
-    // Query the database to extract categories. 
-    // Each category must have at least 1 item for it to work.
-
-    function filterNecessaryFieldNames($column)
+    function isFieldNecessary($column)
     {
       $unNeccessaryFieldNames = ['product_id', 'id', 'category'];
       $fieldName = $column['Field'];
@@ -135,39 +132,40 @@ abstract class Product extends Database
       return !in_array($fieldName, $unNeccessaryFieldNames);
     }
 
-    function mapColumnToFieldName($column)
-    {
-      return $column['Field'];
-    }
-
-    function mapFieldToComments($column)
-    {
-      return [$column['Field'], $column['Comment']];
-    }
-
-    function isItCategoryColumn($column)
-    {
-      return $column['Field'] == 'category';
-    }
-
     $tableName = strtolower(__CLASS__) . 's';
 
     if ($category) {
-      // If category is given, return the fields of that category
+      // IF CATEGORY IS GIVEN RETURN THE FIELDS OF THAT CATEGORY
       $query = "SHOW FULL COLUMNS FROM $category";
       $showColumns = self::select($query);
-      // print_r($showColumns);
-      $categoryFields = array_values(array_map('mapFieldToComments', array_filter($showColumns, 'filterNecessaryFieldNames')));
-      // print_r($categoryFields);
+
+      $categoryFields = array_values(array_map(
+        function ($column) {
+          return [$column['Field'], $column['Comment']];
+        },
+        array_filter($showColumns, 'isFieldNecessary')
+      ));
+
       return ['categoryFields' => $categoryFields];
     } else {
+      // IF CATEGORY IS NOT GIVEN RETURN THE CATEOGRY LIST
       $query = "SHOW COLUMNS FROM $tableName";
       $showColumns = self::select($query);
-      // print_r($showColumns);
-      $commonFields = array_values(array_map('mapColumnToFieldName', array_filter($showColumns, 'filterNecessaryFieldNames')));
-      // print_r($commonFields);
-      // extract categories from enums of products
-      $categoriesEnumString = array_values(array_filter($showColumns, 'isItCategoryColumn'))[0]['Type']; // "enum('books','dvds','furnitures')"
+
+      $commonFields = array_values(array_map(
+        function ($column) {
+          return $column['Field'];
+        },
+        array_filter($showColumns, 'isFieldNecessary')
+      ));
+
+      // extract categories from `enums`
+      $categoriesEnumString = array_values(array_filter(
+        $showColumns,
+        function ($column) {
+          return $column['Field'] == 'category';
+        }
+      ))[0]['Type']; // "enum('books','dvds','furnitures')"
       $categoriesEnumString = str_replace('\'', '', $categoriesEnumString); // "enum(books,dvds,furnitures)"
       $categoriesList = explode(',', substr($categoriesEnumString, 5, (strlen($categoriesEnumString) - 6)));
 

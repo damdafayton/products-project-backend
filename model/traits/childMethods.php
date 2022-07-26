@@ -1,5 +1,15 @@
 <?php
 trait ChildMethods
+
+/**  
+ * Child methods extend methods from the parent Product class. 
+ * When saving/creating a product, initially common fields are created in products table,
+ * this action is handled by Product class,
+ * Then, fields special to the category of the product are saved into a seperate table,
+ * this action is handled by classes extended from Product class.
+ * Same logic is used when creating an instance and retrieving attributes.
+ */
+
 {
   function __construct($sqlResponse)
   {
