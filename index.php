@@ -1,16 +1,16 @@
 <?php
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
-echo $_SERVER['SERVER_NAME'];
+// echo $_SERVER['SERVER_NAME'];
 
-echo 'HELLO';
+// echo 'HELLO';
 
 require_once dirname(__FILE__) . "/config/bootstrap.php";
 
 $baseController = new BaseController();
 
 $uriSegmentList = $baseController->getUriSegmentList();
-$apiPath = 2; // /test-scandiweb-products/index.php/api = 3  // /index.php/api = 2
+$apiPath = RUNNING_ON_LOCAL ? 3 : 2; // /test-scandiweb-products/index.php/api = 3  // /index.php/api = 2
 $Class = null;
 $id = null;
 $query = $_SERVER['QUERY_STRING'];
