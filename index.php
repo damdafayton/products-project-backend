@@ -8,7 +8,7 @@ require_once dirname(__FILE__) . "/config/bootstrap.php";
 $baseController = new BaseController();
 
 $uriSegmentList = $baseController->getUriSegmentList();
-$apiPath = 1; // /test-scandiweb-products/index.php/api = 3  // /api = 1
+$apiPath = 2; // /test-scandiweb-products/index.php/api = 3  // /index.php/api = 2
 $Class = null;
 $id = null;
 $query = $_SERVER['QUERY_STRING'];
