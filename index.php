@@ -12,17 +12,18 @@ $id = null;
 $query = $_SERVER['QUERY_STRING'];
 
 // Deconstruct path
-if (isset($uriSegmentList[$apiPath + 1])) {
-  if (isset($uriSegmentList[$apiPath + 2])) {
-    $id = $uriSegmentList[$apiPath + 2];
-  }
 
+if (isset($uriSegmentList[$apiPath + 1])) {
   $explodePathList = explode(':', $uriSegmentList[$apiPath + 1]); // ['products, 'massDelete']
 
   $mainPath = $explodePathList[0]; // products || pRoDucTS
   $command = isset($explodePathList[1]) ? $explodePathList[1] : null;
   $Class = substr(ucwords(strtolower(($mainPath))), 0, -1); // Products => Product
   $DynamicController = $Class . 'Controller'; // ProductController
+}
+
+if (isset($uriSegmentList[$apiPath + 2])) {
+  $id = $uriSegmentList[$apiPath + 2];
 }
 
 // Check if we have the corresponding Model and Contoller Classes
