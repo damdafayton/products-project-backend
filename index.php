@@ -1,6 +1,7 @@
 <?php
-error_reporting(E_ERROR | E_WARNING | E_PARSE);
-echo __DIR__;
+// error_reporting(E_ERROR | E_WARNING | E_PARSE);
+// echo __DIR__;
+echo 'HELLO';
 // require_once dirname(__FILE__) . "/config/bootstrap.php";
 
 // $baseController = new BaseController();
