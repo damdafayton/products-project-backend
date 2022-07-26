@@ -12,7 +12,8 @@ abstract class Product extends Database
   function __construct($modelData)
   {
     parent::__construct();
-    // Data coming from sql is saved into instance variables to access data through instance objects. By this process, database can be changed by reading values from instance during creating or updating new items.
+    // Data coming from sql is saved into instance variables to access data through instance objects. 
+    // By this process, database can be changed by reading values from instance during creating or updating new items.
 
     try {
       $this->sku = $modelData['sku'];
@@ -20,14 +21,14 @@ abstract class Product extends Database
       $this->price = $modelData['price'];
       $this->description = $modelData['description'];
       $this->category = $modelData['category'];
-      // New products dont have product_id until save() is called.
+      // New products dont have product_id until create() is called.
       $this->product_id = isset($modelData['product_id']) ? $modelData['product_id'] : null;
     } catch (Exception $e) {
       // throw new Exception($e->getMessage());
     }
   }
 
-  function getAttributes()
+  protected function getAttributes()
   {
     return [
       'name' => $this->name, 'price' => $this->price, 'sku' => $this->sku,
@@ -36,7 +37,7 @@ abstract class Product extends Database
     ];
   }
 
-  function create()
+  protected function create()
   {
     $_mainTable = strtolower(__CLASS__) . 's';
 
