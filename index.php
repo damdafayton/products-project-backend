@@ -1,10 +1,6 @@
 <?php
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
-// echo $_SERVER['SERVER_NAME'];
-
-// echo 'HELLO';
-
 require_once dirname(__FILE__) . "/config/bootstrap.php";
 
 $baseController = new BaseController();
@@ -14,7 +10,6 @@ $apiPath = RUNNING_ON_LOCAL ? 3 : 2; // /test-scandiweb-products/index.php/api =
 $Class = null;
 $id = null;
 $query = $_SERVER['QUERY_STRING'];
-// echo $query;
 
 // Deconstruct path
 if (isset($uriSegmentList[$apiPath + 1]) && $uriSegmentList[$apiPath + 1]) {
@@ -26,9 +21,7 @@ if (isset($uriSegmentList[$apiPath + 1]) && $uriSegmentList[$apiPath + 1]) {
 
   $mainPath = $explodePathList[0]; // products || pRoDucTS
   $command = isset($explodePathList[1]) ? $explodePathList[1] : null;
-  $Class = ucwords(strtolower(($mainPath))); // Products
-  $Class = substr($Class, 0, strlen($Class) - 1); // Product
-
+  $Class = substr(ucwords(strtolower(($mainPath))), 0, -1); // Products => Product
   $DynamicController = $Class . 'Controller'; // ProductController
 }
 
