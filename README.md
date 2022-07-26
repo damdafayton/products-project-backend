@@ -7,6 +7,7 @@
 ## How to Run
 
 - Clone the backend repo to your php server
+- Setup MySQL according to [these credentials](/config/configuration.php) or change the credentials according to your local setup.
 - Run your server
 - Hit `localhost/{WWW_THIS_APP}/seeds/categories.php` on your browser to create category tables
 - Hit `localhost/{WWW_THIS_APP}/seeds/products.php` to seed your tables with dummy data
