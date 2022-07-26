@@ -12,8 +12,8 @@ $id = null;
 $query = $_SERVER['QUERY_STRING'];
 
 // Deconstruct path
-if (isset($uriSegmentList[$apiPath + 1]) && $uriSegmentList[$apiPath + 1]) {
-  if (isset($uriSegmentList[$apiPath + 2]) && $uriSegmentList[$apiPath + 2]) {
+if (isset($uriSegmentList[$apiPath + 1])) {
+  if (isset($uriSegmentList[$apiPath + 2])) {
     $id = $uriSegmentList[$apiPath + 2];
   }
 

@@ -32,9 +32,9 @@ trait ChildMethods
     return $attributes;
   }
 
-  function save()
+  function create()
   {
-    $insert_id = parent::save();
+    $insert_id = parent::create();
 
     if ($insert_id) {
       $privateFieldValues = [];

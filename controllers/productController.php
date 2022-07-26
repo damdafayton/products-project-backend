@@ -16,7 +16,7 @@ class ProductController extends BaseController
 
       if (class_exists($Model)) {
         $newEntry = new $Model($json);
-        $result = $newEntry->save();
+        $result = $newEntry->create();
 
         $this->sendOutput($result);
       } else {
