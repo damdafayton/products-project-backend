@@ -1,6 +1,8 @@
 <?php
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
+echo $_SERVER['SERVER_NAME'];
+
 echo 'HELLO';
 
 require_once dirname(__FILE__) . "/config/bootstrap.php";
