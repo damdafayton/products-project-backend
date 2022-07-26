@@ -2,6 +2,7 @@
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
 echo __DIR__;
 echo 'HELLO';
+echo dirname(__FILE__);
 // require_once dirname(__FILE__) . "/config/bootstrap.php";
 
 // $baseController = new BaseController();
