@@ -12,7 +12,7 @@ abstract class Database
   {
     try {
       if (self::$connection == NULL) {
-        echo DB_HOST, DB_USERNAME;
+
         self::$connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE_NAME);
 
         //Get Heroku ClearDB connection information

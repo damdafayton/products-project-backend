@@ -16,8 +16,8 @@ class BaseController
    */
   function getUriSegmentList()
   {
-    $uriPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); // /test-scandiweb-products/index.php/products
-    $uriSegmentList = explode('/', $uriPath); // [ , test-scandiweb-products, index.php, products]
+    $uriPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); // /test-scandiweb-products/index.php/api/products
+    $uriSegmentList = explode('/', $uriPath); // [ , test-scandiweb-products, index.php, api, products]
 
     return $uriSegmentList;
   }
