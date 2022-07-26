@@ -7,6 +7,8 @@
 ## How to Run
 
 - Clone the backend repo to your php server
+  - `git clone git@github.com:damdafayton/products-project-backend.git` or
+  - `git clone https://github.com/damdafayton/products-project-backend`
 - Setup MySQL according to [these credentials](/config/configuration.php) or change the credentials according to your local setup.
 - Run your server
 - Hit `localhost/{WWW_THIS_APP}/seeds/categories.php` on your browser to create category tables
