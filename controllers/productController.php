@@ -2,6 +2,14 @@
 
 class ProductController extends BaseController
 {
+
+  function index()
+  {
+    $queryResult = parent::index();
+
+    $this->sendOutput($queryResult);
+  }
+
   function show($id)
   {
     $instance = parent::show($id);
@@ -38,10 +46,17 @@ class ProductController extends BaseController
   function handleQueries()
   {
     $Model = substr(get_class($this), 0, -10); // ProductController to Product
-    $queryList = $this->getQueryStringParams();
+    $queryList = parent::getQueryStringParams();
+
     if (array_key_exists('fields', $queryList)) {
       $fields = $Model::getFields($queryList['fields']);
       $this->sendOutput($fields);
     }
+  }
+
+  function massOperations($command)
+  {
+    $result = parent::massOperations($command);
+    $this->sendOutput($result);
   }
 }

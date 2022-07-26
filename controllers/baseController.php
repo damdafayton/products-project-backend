@@ -1,5 +1,5 @@
 <?php
-class BaseController
+abstract class BaseController
 {
   /**
    * __call magic method.
@@ -7,30 +7,6 @@ class BaseController
   public function __call($name, $arguments)
   {
     $this->sendOutput('', array('HTTP/1.1 404 Not Found'));
-  }
-
-  /**
-   * Get URI elements.
-   * 
-   * @return array
-   */
-  function getUriSegmentList()
-  {
-    $uriPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); // /test-scandiweb-products/index.php/api/products
-    $uriSegmentList = explode('/', $uriPath); // [ , test-scandiweb-products, index.php, api, products]
-
-    return $uriSegmentList;
-  }
-
-  /**
-   * Get querystring params.
-   * 
-   * @return array
-   */
-  function getQueryStringParams()
-  {
-    parse_str($_SERVER['QUERY_STRING'], $queryList);
-    return $queryList;
   }
 
   /**
@@ -55,15 +31,39 @@ class BaseController
     exit;
   }
 
-  function index()
+  /**
+   * Get URI elements.
+   * 
+   * @return array
+   */
+  static function getUriSegmentList()
+  {
+    $uriPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); // /test-scandiweb-products/index.php/api/products
+    $uriSegmentList = explode('/', $uriPath); // [ , test-scandiweb-products, index.php, api, products]
+
+    return $uriSegmentList;
+  }
+
+  /**
+   * Get querystring params.
+   * 
+   * @return array
+   */
+  static function getQueryStringParams()
+  {
+    parse_str($_SERVER['QUERY_STRING'], $queryList);
+    return $queryList;
+  }
+
+  protected function index()
   {
     $Model = substr(get_class($this), 0, -10); // ProductController to Product
     $queryResult = $Model::all();
 
-    $this->sendOutput($queryResult);
+    return $queryResult;
   }
 
-  function show($id)
+  protected function show($id)
   {
     $Model = substr(get_class($this), 0, -10); // ProductController to Product
     $instance = $Model::getById($id);
@@ -71,7 +71,7 @@ class BaseController
     return $instance;
   }
 
-  function massOperations($command)
+  protected function massOperations($command)
   {
     $string = file_get_contents("php://input");
     if ($string === false) {
@@ -82,8 +82,6 @@ class BaseController
 
     $Model = substr(get_class($this), 0, -10); // ProductController to Product
 
-    $result = $Model::$command(json_decode($list));
-    // print_r($result);
-    $this->sendOutput($result);
+    return $Model::$command(json_decode($list));
   }
 }

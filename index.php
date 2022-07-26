@@ -3,9 +3,9 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 require_once dirname(__FILE__) . "/config/bootstrap.php";
 
-$baseController = new BaseController();
+// $baseController = new BaseController();
 
-$uriSegmentList = $baseController->getUriSegmentList();
+$uriSegmentList = BaseController::getUriSegmentList();
 $apiPath = RUNNING_ON_LOCAL ? 3 : 2; // /test-scandiweb-products/index.php/api = 3  // /index.php/api = 2
 $Class = null;
 $id = null;
