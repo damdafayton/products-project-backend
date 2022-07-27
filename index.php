@@ -20,8 +20,8 @@ if (isset($uriSegmentList[$apiPath + 1])) {
   $Class = substr(ucwords(strtolower(($mainPath))), 0, -1); // products || pRoDucTS => Product
 
   $command = isset($explodePathList[1]) ? $explodePathList[1] : null;
-  $controller = 'controllers\\' . $Class . 'Controller'; // ProductController
-  $model = 'model\\' . $Class; // Product
+  $controller = '\\controllers\\' . $Class . 'Controller'; // ProductController
+  $model = '\\model\\' . $Class; // Product
 }
 
 if (isset($uriSegmentList[$apiPath + 2])) {

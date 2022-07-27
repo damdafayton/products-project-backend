@@ -74,18 +74,35 @@ abstract class Product extends Database
     $allProducts =  self::select("SELECT * FROM $_mainTable ORDER BY product_id");
 
     $getPrivateFields = function ($product) {
+      $returnArray =  ['product' => $product];
+
       $categoryTable = $product['category'];
       $productId = $product['product_id'];
 
+      // Get fields from category specific table
       $productSpecialFields = self::select("SELECT * from $categoryTable WHERE product_id = ?", ['s', $productId]);
-      $productSpecialFields = count($productSpecialFields) > 0 ? $productSpecialFields[0] : [];
 
-      ['categoryFields' => $categoryFields] = self::getFields($categoryTable);
+      if (count($productSpecialFields) > 0) {
+        // Remove id fields and leave only special fields such as: size, weight, etc..
+        $productSpecialFields = array_filter($productSpecialFields[0], function ($field) {
+          return $field !== 'id' && $field !== 'product_id';
+        }, ARRAY_FILTER_USE_KEY);
 
-      return [
-        "product" => array_merge($product, $productSpecialFields),
-        "categoryFields" => $categoryFields
-      ];
+        global $categoryFields;
+        $categoryFields = self::getFields($categoryTable)['categoryFields'];
+
+        // Loop to convert ([weight] => 2.00) to ([weight] => [2.00, kg])
+        foreach ($productSpecialFields as $key => $value) {
+          $productSpecialFields[$key] = [$value, $categoryFields[$key]];
+        }
+
+        // Check if product has dimensions
+        $productSpecialFields = utils\joinFields($productSpecialFields);
+
+        $returnArray['productSpecialFields'] = $productSpecialFields;
+      }
+
+      return $returnArray;
     };
 
     return array_map($getPrivateFields, $allProducts);
@@ -140,6 +157,7 @@ abstract class Product extends Database
 
   static function getFields($category = null)
   {
+
     $tableName = utils\modelNameToTableName(__CLASS__, __NAMESPACE__);
 
     $isFieldNecessary = function ($column) {
@@ -151,19 +169,19 @@ abstract class Product extends Database
 
     if ($category) {
       /* If category is given as an argument, it returns the fields and field types
-      * [['weight', 'kg], ['size', 'mb']]
-      * @return array(array)
+      * Data comes from Comment part of mySql table
+      * Array ( [weight] => kg)
+      * @return array()
       */
 
       $query = "SHOW FULL COLUMNS FROM $category";
       $showColumns = self::select($query);
 
-      $categoryFields = array_values(array_map(
-        function ($column) {
-          return [$column['Field'], $column['Comment']];
-        },
-        array_filter($showColumns, $isFieldNecessary)
-      ));
+      $categoryFields = [];
+
+      foreach (array_filter($showColumns, $isFieldNecessary) as $column) {
+        $categoryFields[$column['Field']] = $column['Comment'];
+      }
 
       return ['categoryFields' => $categoryFields];
     } else {
