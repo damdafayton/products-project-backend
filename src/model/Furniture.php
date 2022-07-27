@@ -5,7 +5,9 @@ namespace model;
 class Furniture extends Product
 {
   use traits\Dimensions;
-  use traits\ChildMethods;
+
+  use traits\ProductChildMethods;
+
   private $privateFields = ['height', 'width', 'length'];
   private $privateFieldDataTypes = 'iii';
 }

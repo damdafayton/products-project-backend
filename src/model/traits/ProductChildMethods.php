@@ -4,7 +4,7 @@ namespace model\traits;
 
 use utils;
 
-trait ChildMethods
+trait ProductChildMethods
 {
   /**  
    * Child methods extend methods from the parent Product class. 
@@ -18,6 +18,7 @@ trait ChildMethods
   function __construct($sqlResponse)
   {
     parent::__construct($sqlResponse);
+
     try {
       foreach ($this->privateFields as $field) {
         $this->$field = $sqlResponse[$field];
@@ -30,9 +31,11 @@ trait ChildMethods
   function getAttributes()
   {
     $attributes = parent::getAttributes();
+
     foreach ($this->privateFields as $field) {
       $attributes[$field] = $this->$field;
     }
+
     return $attributes;
   }
 
@@ -42,6 +45,7 @@ trait ChildMethods
 
     if ($insert_id) {
       $privateFieldValues = [];
+
       foreach ($this->privateFields as $field) {
         array_push($privateFieldValues, $this->$field);
       };
@@ -49,7 +53,7 @@ trait ChildMethods
       $privateFieldsStringified = join(', ', $this->privateFields);
       $qMarkForExtraFields = str_repeat(", ?", count($privateFieldValues));
 
-      // using hard-coded namepsace to escape from sub-namepsace
+      // using hard-coded namepsace to escape from sub-namespace
       $_tableName = utils\modelNameToTableName(__CLASS__, 'model');
 
       $_privateFieldDataTypes = $this->privateFieldDataTypes;
@@ -63,6 +67,7 @@ trait ChildMethods
       if ($insert_id) {
         return $this->getAttributes();
       }
+
       return ["error" => $error];
     }
   }
@@ -82,8 +87,10 @@ trait ChildMethods
       $categoryTable = $product['category'];
       $productId = $product['product_id'];
       $productSpecialFields = self::select("SELECT * from $categoryTable WHERE product_id = ?", ['s', $productId]);
+
       return array_merge($product, $productSpecialFields[0]);
     };
+
     return array_map($getPrivateFields, $allProductsUnderCategory);
   }
 }

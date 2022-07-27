@@ -72,13 +72,22 @@ abstract class Product extends Database
     $_mainTable = utils\modelNameToTableName(__CLASS__, __NAMESPACE__);
 
     $allProducts =  self::select("SELECT * FROM $_mainTable ORDER BY product_id");
+
     $getPrivateFields = function ($product) {
       $categoryTable = $product['category'];
       $productId = $product['product_id'];
+
       $productSpecialFields = self::select("SELECT * from $categoryTable WHERE product_id = ?", ['s', $productId]);
       $productSpecialFields = count($productSpecialFields) > 0 ? $productSpecialFields[0] : [];
-      return array_merge($product, $productSpecialFields);
+
+      ['categoryFields' => $categoryFields] = self::getFields($categoryTable);
+
+      return [
+        "product" => array_merge($product, $productSpecialFields),
+        "categoryFields" => $categoryFields
+      ];
     };
+
     return array_map($getPrivateFields, $allProducts);
   }
 
@@ -127,20 +136,25 @@ abstract class Product extends Database
     return $response;
   }
 
+
+
   static function getFields($category = null)
   {
-    function isFieldNecessary($column)
-    {
+    $tableName = utils\modelNameToTableName(__CLASS__, __NAMESPACE__);
+
+    $isFieldNecessary = function ($column) {
       $unNeccessaryFieldNames = ['product_id', 'id', 'category'];
       $fieldName = $column['Field'];
 
       return !in_array($fieldName, $unNeccessaryFieldNames);
-    }
-
-    $tableName = utils\modelNameToTableName(__CLASS__, __NAMESPACE__);
+    };
 
     if ($category) {
-      // IF CATEGORY IS GIVEN RETURN THE FIELDS OF THAT CATEGORY
+      /* If category is given as an argument, it returns the fields and field types
+      * [['weight', 'kg], ['size', 'mb']]
+      * @return array(array)
+      */
+
       $query = "SHOW FULL COLUMNS FROM $category";
       $showColumns = self::select($query);
 
@@ -148,7 +162,7 @@ abstract class Product extends Database
         function ($column) {
           return [$column['Field'], $column['Comment']];
         },
-        array_filter($showColumns, 'model\isFieldNecessary')
+        array_filter($showColumns, $isFieldNecessary)
       ));
 
       return ['categoryFields' => $categoryFields];
@@ -161,7 +175,7 @@ abstract class Product extends Database
         function ($column) {
           return $column['Field'];
         },
-        array_filter($showColumns, 'model\isFieldNecessary')
+        array_filter($showColumns, $isFieldNecessary)
       ));
 
       // extract categories from `enums`
