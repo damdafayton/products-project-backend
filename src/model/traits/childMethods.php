@@ -1,16 +1,20 @@
 <?php
+
+namespace model\traits;
+
+use utils;
+
 trait ChildMethods
-
-/**  
- * Child methods extend methods from the parent Product class. 
- * When saving/creating a product, initially common fields are created in products table,
- * this action is handled by Product class,
- * Then, fields special to the category of the product are saved into a seperate table,
- * this action is handled by classes extended from Product class.
- * Same logic is used when creating an instance and retrieving attributes.
- */
-
 {
+  /**  
+   * Child methods extend methods from the parent Product class. 
+   * When saving/creating a product, initially common fields are created in products table,
+   * this action is handled by Product class,
+   * Then, fields special to the category of the product are saved into a seperate table,
+   * this action is handled by classes extended from Product class.
+   * Same logic is used when creating an instance and retrieving attributes.
+   */
+
   function __construct($sqlResponse)
   {
     parent::__construct($sqlResponse);
@@ -18,7 +22,7 @@ trait ChildMethods
       foreach ($this->privateFields as $field) {
         $this->$field = $sqlResponse[$field];
       }
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
       // throw new Exception($e->getMessage());
     }
   }
@@ -45,7 +49,9 @@ trait ChildMethods
       $privateFieldsStringified = join(', ', $this->privateFields);
       $qMarkForExtraFields = str_repeat(", ?", count($privateFieldValues));
 
-      $_tableName = strtolower(__CLASS__) . 's';
+      // using hard-coded namepsace to escape from sub-namepsace
+      $_tableName = utils\modelNameToTableName(__CLASS__, 'model');
+
       $_privateFieldDataTypes = $this->privateFieldDataTypes;
 
       $stmtResult = $this->insert(

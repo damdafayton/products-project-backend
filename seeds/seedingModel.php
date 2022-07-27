@@ -1,6 +1,6 @@
 <?php
-require_once '../model/database.php';
-require_once '../config/configuration.php';
+require_once '../src/model/database.php';
+require_once '../src/config/configuration.php';
 
 
 class Seeding extends Database

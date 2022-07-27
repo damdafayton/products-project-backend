@@ -1,8 +1,11 @@
 <?php
+
+namespace model;
+
 class Dvd extends Product
 {
-  use Size;
-  use ChildMethods;
+  use traits\Size;
+  use traits\ChildMethods;
   private $privateFields = ['size'];
   private $privateFieldDataTypes = 'i';
 }

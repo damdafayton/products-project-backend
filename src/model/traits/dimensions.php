@@ -1,4 +1,7 @@
 <?php
+
+namespace model\traits;
+
 trait Dimensions
 {
   protected $height = null;

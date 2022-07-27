@@ -1,4 +1,10 @@
 <?php
+
+namespace controllers;
+
+use utils;
+// use model;
+
 abstract class BaseController
 {
   /**
@@ -6,7 +12,7 @@ abstract class BaseController
    */
   public function __call($name, $arguments)
   {
-    $this->sendOutput('', array('HTTP/1.1 404 Not Found'));
+    $this->sendOutput(["error" => "not found"], array('HTTP/1.1 404 Not Found'));
   }
 
   /**
@@ -57,7 +63,9 @@ abstract class BaseController
 
   protected function index()
   {
-    $Model = substr(get_class($this), 0, -10); // ProductController to Product
+    $Model = utils\controllerNameToModelName($this, __NAMESPACE__);
+
+    // substr(get_class($this), 0, -10); // ProductController to Product
     $queryResult = $Model::all();
 
     return $queryResult;
@@ -65,8 +73,9 @@ abstract class BaseController
 
   protected function show($id)
   {
-    $Model = substr(get_class($this), 0, -10); // ProductController to Product
-    $instance = $Model::getById($id);
+    $model = utils\controllerNameToModelName($this, __NAMESPACE__);
+
+    $instance = $model::getById($id);
 
     return $instance;
   }
@@ -80,7 +89,7 @@ abstract class BaseController
     $json = json_decode($string, true);
     ['list' => $list] = $json;
 
-    $Model = substr(get_class($this), 0, -10); // ProductController to Product
+    $Model = utils\controllerNameToModelName($this, __NAMESPACE__);
 
     return $Model::$command(json_decode($list));
   }

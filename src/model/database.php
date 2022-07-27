@@ -1,4 +1,7 @@
 <?php
+
+namespace model;
+
 abstract class Database
 {
   protected static $connection = null;
@@ -14,7 +17,7 @@ abstract class Database
       if (self::$connection == NULL) {
 
         if (RUNNING_ON_LOCAL) {
-          self::$connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE_NAME);
+          self::$connection = new \mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE_NAME);
         } else {
           //Get Heroku ClearDB connection information
           $cleardb_url = parse_url(getenv("CLEARDB_DATABASE_URL"));
@@ -22,17 +25,17 @@ abstract class Database
           $cleardb_username = $cleardb_url["user"];
           $cleardb_password = $cleardb_url["pass"];
           $cleardb_db = substr($cleardb_url["path"], 1);
-          $active_group = 'default';
-          $query_builder = TRUE;
+          // $active_group = 'default';
+          // $query_builder = TRUE;
           // Connect to DB
-          self::$connection = new mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
+          self::$connection = new \mysqli($cleardb_server, $cleardb_username, $cleardb_password, $cleardb_db);
         }
 
         if (mysqli_connect_errno()) {
           // throw new Exception("Could not connect to database.");
         }
       }
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
       // throw new Exception($e->getMessage());
     }
   }
@@ -47,8 +50,8 @@ abstract class Database
       $stmt->close();
 
       return $result;
-    } catch (Exception $e) {
-      throw new Exception($e->getMessage());
+    } catch (\Exception $e) {
+      throw new \Exception($e->getMessage());
     }
     return false;
   }
@@ -66,8 +69,8 @@ abstract class Database
 
       // echo $result, "RESULT2";
       return $result;
-    } catch (Exception $e) {
-      throw new Exception($e->getMessage());
+    } catch (\Exception $e) {
+      throw new \Exception($e->getMessage());
     }
     return false;
   }
@@ -80,7 +83,7 @@ abstract class Database
       $stmt = self::$connection->prepare($query);
       // print_r(self::$connection);
       if ($stmt === false) {
-        throw new Exception("Unable to do prepared statement: " . $query);
+        throw new \Exception("Unable to do prepared statement: " . $query);
       }
 
       if (count($params)) {
@@ -90,8 +93,8 @@ abstract class Database
       $stmt->execute();
 
       return $stmt;
-    } catch (Exception $e) {
-      throw new Exception($e->getMessage());
+    } catch (\Exception $e) {
+      throw new \Exception($e->getMessage());
     }
   }
 
@@ -121,8 +124,8 @@ abstract class Database
       // If this is not a select query but delete operation, return affected rows instead of query result
       $affected_rows = $con->affected_rows;
       return $response ? $response : ['affected_rows' => $affected_rows];
-    } catch (Exception $e) {
-      throw new Exception($e->getMessage());
+    } catch (\Exception $e) {
+      throw new \Exception($e->getMessage());
     }
   }
 }

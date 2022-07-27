@@ -1,8 +1,11 @@
 <?php
+
+namespace model;
+
 class Furniture extends Product
 {
-  use Dimensions;
-  use ChildMethods;
+  use traits\Dimensions;
+  use traits\ChildMethods;
   private $privateFields = ['height', 'width', 'length'];
   private $privateFieldDataTypes = 'iii';
 }

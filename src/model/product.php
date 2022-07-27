@@ -1,5 +1,9 @@
 <?php
 
+namespace model;
+
+use utils;
+
 abstract class Product extends Database
 {
   protected $product_id;
@@ -23,7 +27,7 @@ abstract class Product extends Database
       $this->category = $modelData['category'];
       // New products dont have product_id until create() is called.
       $this->product_id = isset($modelData['product_id']) ? $modelData['product_id'] : null;
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
       // throw new Exception($e->getMessage());
     }
   }
@@ -39,7 +43,7 @@ abstract class Product extends Database
 
   protected function create()
   {
-    $_mainTable = strtolower(__CLASS__) . 's';
+    $_mainTable = utils\modelNameToTableName(__CLASS__, __NAMESPACE__);
 
     [
       'sku' => $sku, 'name' => $name, 'price' => $price,
@@ -65,7 +69,8 @@ abstract class Product extends Database
   static function all()
   // Returns sql query result.
   {
-    $_mainTable = strtolower(__CLASS__) . 's';
+    $_mainTable = utils\modelNameToTableName(__CLASS__, __NAMESPACE__);
+
     $allProducts =  self::select("SELECT * FROM $_mainTable ORDER BY product_id");
     $getPrivateFields = function ($product) {
       $categoryTable = $product['category'];
@@ -80,7 +85,7 @@ abstract class Product extends Database
   static function getById($id)
   // Returns instance of correct product model.
   {
-    $_mainTable = strtolower(__CLASS__) . 's';
+    $_mainTable = utils\modelNameToTableName(__CLASS__, __NAMESPACE__);
 
     $sqlQueryResult =  self::executeMultiQuery(
       "
@@ -92,21 +97,21 @@ abstract class Product extends Database
     );
 
     if ($sqlQueryResult['product_id'] > 0) {
-      $category = $sqlQueryResult['category']; // books
+      $category = $sqlQueryResult['category'];
 
-      $Model = tableToClassName($category); // Book
+      $Model = utils\tableNameToModelName($category, __NAMESPACE__);
 
       $modelInstance = new $Model($sqlQueryResult);
       return $modelInstance;
     } else {
-      // handle null return
       return null;
     }
   }
 
   static function massDelete($productListToDelete = [])
   {
-    $_mainTable = strtolower(__CLASS__) . 's';
+    $_mainTable = utils\modelNameToTableName(__CLASS__, __NAMESPACE__);
+
     $response = null; // set before in case empty list is provided
     foreach ($productListToDelete as $productId) {
       $query = "
@@ -132,7 +137,7 @@ abstract class Product extends Database
       return !in_array($fieldName, $unNeccessaryFieldNames);
     }
 
-    $tableName = strtolower(__CLASS__) . 's';
+    $tableName = utils\modelNameToTableName(__CLASS__, __NAMESPACE__);
 
     if ($category) {
       // IF CATEGORY IS GIVEN RETURN THE FIELDS OF THAT CATEGORY
@@ -143,7 +148,7 @@ abstract class Product extends Database
         function ($column) {
           return [$column['Field'], $column['Comment']];
         },
-        array_filter($showColumns, 'isFieldNecessary')
+        array_filter($showColumns, 'model\isFieldNecessary')
       ));
 
       return ['categoryFields' => $categoryFields];
@@ -156,7 +161,7 @@ abstract class Product extends Database
         function ($column) {
           return $column['Field'];
         },
-        array_filter($showColumns, 'isFieldNecessary')
+        array_filter($showColumns, 'model\isFieldNecessary')
       ));
 
       // extract categories from `enums`

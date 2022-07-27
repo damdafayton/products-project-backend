@@ -1,5 +1,9 @@
 <?php
 
+namespace controllers;
+
+use utils;
+
 class ProductController extends BaseController
 {
 
@@ -16,6 +20,8 @@ class ProductController extends BaseController
 
     if ($instance) {
       $this->sendOutput($instance->getAttributes());
+    } else {
+      $this->exit();
     }
   }
 
@@ -28,7 +34,8 @@ class ProductController extends BaseController
       }
       $json = json_decode($string, true);
       ['category' => $category] = $json;
-      $Model = tableToClassName($category);
+      $Model = utils\tableNameToModelName($category, __NAMESPACE__);
+      // echo $Model;
 
       if (class_exists($Model)) {
         $newEntry = new $Model($json);
@@ -38,14 +45,15 @@ class ProductController extends BaseController
       } else {
         $this->sendOutput(["error" => "Missing data!"]);
       }
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
       // throw new Exception($e->getMessage());
     }
   }
 
   function handleQueries()
   {
-    $Model = substr(get_class($this), 0, -10); // ProductController to Product
+    $Model = utils\controllerNameToModelName($this, __NAMESPACE__);
+    // substr(get_class($this), 0, -10); // ProductController to Product
     $queryList = parent::getQueryStringParams();
 
     if (array_key_exists('fields', $queryList)) {

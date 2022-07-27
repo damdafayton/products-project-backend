@@ -1,11 +1,11 @@
 <?php
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
-require_once dirname(__FILE__) . "/config/bootstrap.php";
+require_once dirname(__FILE__) . "/src/config/bootstrap.php";
 
 // $baseController = new BaseController();
 
-$uriSegmentList = BaseController::getUriSegmentList();
+$uriSegmentList = controllers\BaseController::getUriSegmentList();
 $apiPath = RUNNING_ON_LOCAL ? 3 : 2; // /test-scandiweb-products/index.php/api = 3  // /index.php/api = 2
 $Class = null;
 $id = null;
@@ -17,9 +17,11 @@ if (isset($uriSegmentList[$apiPath + 1])) {
   $explodePathList = explode(':', $uriSegmentList[$apiPath + 1]); // ['products, 'massDelete']
 
   $mainPath = $explodePathList[0]; // products || pRoDucTS
+  $Class = substr(ucwords(strtolower(($mainPath))), 0, -1); // products || pRoDucTS => Product
+
   $command = isset($explodePathList[1]) ? $explodePathList[1] : null;
-  $Class = substr(ucwords(strtolower(($mainPath))), 0, -1); // Products => Product
-  $DynamicController = $Class . 'Controller'; // ProductController
+  $controller = 'controllers\\' . $Class . 'Controller'; // ProductController
+  $model = 'model\\' . $Class; // Product
 }
 
 if (isset($uriSegmentList[$apiPath + 2])) {
@@ -27,8 +29,8 @@ if (isset($uriSegmentList[$apiPath + 2])) {
 }
 
 // Check if we have the corresponding Model and Contoller Classes
-if (class_exists($Class) && class_exists($DynamicController)) {
-  $instance = new $DynamicController();
+if (class_exists($model) && class_exists($controller)) {
+  $instance = new $controller();
   switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
       if ($id) {
