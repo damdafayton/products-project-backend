@@ -9,7 +9,8 @@ function autoLoader($className)
 {
   $fileName = PROJECT_ROOT_PATH . '\\' . $className . ".php";
   $fileName = str_replace('\\', DIRECTORY_SEPARATOR, $fileName);
-
+  echo $fileName;
+  echo "______________\r\n";
   if (is_readable($fileName)) {
     require $fileName;
   }
