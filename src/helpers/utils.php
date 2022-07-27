@@ -7,19 +7,6 @@ function removeNameSpace($string, $namespace)
   return str_replace($namespace . '\\', '', $string);
 }
 
-function tableNameToModelName($tableName, $namespace = null)
-{
-  // books to model\Book
-
-  $model = ucwords((strtolower(substr($tableName, 0, strlen($tableName) - 1))));
-
-  if ($namespace) {
-    $model = 'model\\' . removeNameSpace($model, $namespace);
-  }
-
-  return $model;
-}
-
 function controllerNameToModelName($thisOfController, $namespace = null)
 {
   // ProductController to Product
@@ -45,4 +32,17 @@ function modelNameToTableName($classOfModel, $namespace = null)
   }
 
   return $tableName;
+}
+
+function tableNameToModelName($tableName, $namespace = null)
+{
+  // books to model\Book
+
+  $model = ucwords((strtolower(substr($tableName, 0, strlen($tableName) - 1))));
+
+  if ($namespace) {
+    $model = $namespace . '\\' . $model;
+  }
+
+  return $model;
 }

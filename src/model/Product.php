@@ -99,7 +99,7 @@ abstract class Product extends Database
     if ($sqlQueryResult['product_id'] > 0) {
       $category = $sqlQueryResult['category'];
 
-      $Model = utils\tableNameToModelName($category, __NAMESPACE__);
+      $Model = utils\tableNameToModelName($category, 'model');
 
       $modelInstance = new $Model($sqlQueryResult);
       return $modelInstance;

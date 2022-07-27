@@ -34,7 +34,7 @@ class ProductController extends BaseController
       }
       $json = json_decode($string, true);
       ['category' => $category] = $json;
-      $Model = utils\tableNameToModelName($category, __NAMESPACE__);
+      $Model = utils\tableNameToModelName($category, 'model');
       // echo $Model;
 
       if (class_exists($Model)) {
