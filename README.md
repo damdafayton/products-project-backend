@@ -35,7 +35,7 @@ All the data that is served on the front-end is provided from the back-end, henc
 ## Class Structure
 
 ### Controller
-- CustomPsrUriInterface
+- Uri implements CustomPsrUriInterface
   - HttpRequest implements CustomPsrHttpRequestInterface
   - HttpResponse implements CustomPsrHttpResponseInterface
 
