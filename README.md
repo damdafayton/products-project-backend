@@ -35,12 +35,12 @@ All the data that is served on the front-end is provided from the back-end, henc
 ## Class Structure
 
 ### Controller
-- CustomPsrUriInterface
-  - CustomPsrHttpResponseInterface
-  - CustomPsrHttpRequestInterface
-    - abstract HttpRequest
-      - BaseController
-        - ProductController
+- Uri implements CustomPsrUriInterface
+  - HttpRequest implements CustomPsrHttpRequestInterface
+  - HttpResponse implements CustomPsrHttpResponseInterface
+
+- BaseController implements ControllerInterface
+  - ProductController
 
 I have created `CustomPsr....Interface`s to gather together the methods I needed from PSR to build this application. Since all of the methods are not needed for such little functionality, I didn't implement the original interfaces.
 
@@ -62,7 +62,7 @@ Here is an example.
 class Dvd extends Product
 {
   use Size;
-  use ChildMethods;
+  use ProductChildMethods;
   private $privateFields = ['size'];
   private $privateFieldDataTypes = 'i';
 }
