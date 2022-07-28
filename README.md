@@ -34,14 +34,6 @@ All the data that is served on the front-end is provided from the back-end, henc
 
 ## Class Structure
 
-### Model
-- abstract Database
-  - Product
-    - Dvd
-    - Furniture
-    - Book
-  - Seeding
-
 ### Controller
 - CustomPsrUriInterface
   - CustomPsrHttpResponseInterface
@@ -49,6 +41,15 @@ All the data that is served on the front-end is provided from the back-end, henc
     - abstract HttpRequest
       - BaseController
         - ProductController
+I have created `CustomPsr....Interface`s to gather together the methods I needed from PSR for setting up application. Since whole methods are not needes for such little functionality, I didn't implement the original interfaces.
+
+### Model
+- abstract Database
+  - Product
+    - Dvd
+    - Furniture
+    - Book
+  - Seeding
 
 It is very easy to create a new category class.
 1) Special field traits are imported depending on the features of the product such as: size, weight, length etc...
