@@ -36,5 +36,5 @@ if (class_exists($controllerClass)) {
       $instance->exit('Action couldn\'t found');
   };
 } else {
-  $request->response->withStatus(404, "Not Found");
+  $response->withStatus(404, "Not Found");
 }
