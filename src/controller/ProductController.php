@@ -9,6 +9,7 @@ class ProductController extends BaseController implements interfaces\ControllerI
 
   function __construct()
   {
+    // We do this to enable magic _call method;
     parent::__construct();
   }
 

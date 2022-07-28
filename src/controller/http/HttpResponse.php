@@ -4,24 +4,24 @@ namespace controller\http;
 
 class HttpResponse implements \controller\interfaces\CustomPsrHttpResponseInterface
 {
-  protected $data;
-
-  public function withHeader($name, $value)
+  function setHeader($name, $value)
   {
     header("$name: $value");
-    return clone $this;
   }
 
-  public function withStatus($code = 200, $reasonPhrase = '')
+  function withHeader($name, $value)
+  {
+    return clone $this->setHeader($name, $value);
+  }
+
+  function setStatus($code = 200, $reasonPhrase = '')
   {
     header("HTTP/1.1 $code $reasonPhrase");
-    return clone $this;
   }
 
-  public function setData($data)
+  function withStatus($code = 200, $reasonPhrase = '')
   {
-    $this->data = $data;
-    return clone $this;
+    return clone $this->setStatus($code = 200, $reasonPhrase = '');
   }
 
   /**
@@ -30,15 +30,11 @@ class HttpResponse implements \controller\interfaces\CustomPsrHttpResponseInterf
    * @param mixed  $data
    * @param string $httpHeader
    */
-  public function sendOutput($data = null)
+  function sendOutput($data = null)
   {
     header("Content-Type: application/json; charset=UTF-8");
 
-    if ($data) {
-      $this->setData($data);
-    }
-
-    echo json_encode($this->data);
+    echo json_encode($data);
 
     exit;
   }
