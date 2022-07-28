@@ -2,11 +2,8 @@
 
 namespace controller;
 
-abstract class HttpRequest implements interfaces\CustomPsrHttpRequestInterface
+class HttpRequest implements interfaces\CustomPsrHttpRequestInterface
 {
-
-  public $response;
-
   protected $requestMethod;
   protected $uri;
   protected $apiNameSpacePath;
@@ -18,18 +15,6 @@ abstract class HttpRequest implements interfaces\CustomPsrHttpRequestInterface
     // Remote server =  /test-scandiweb-products/index.php/api = 3 
     // Local server = /index.php/api = 2
     $this->apiNameSpacePath = RUNNING_ON_LOCAL ? 3 : 2;
-
-    $this->response = new HttpResponse();
-  }
-
-  /**
-   * __call magic method.
-   */
-  function __call($name, $arguments)
-  {
-    $this->response
-      ->withStatus(404, "Not Found")
-      ->sendOutput(["caller" => $name, "error" => $arguments]);
   }
 
   /**
@@ -106,13 +91,13 @@ abstract class HttpRequest implements interfaces\CustomPsrHttpRequestInterface
     $string = file_get_contents("php://input");
 
     if ($string === false) {
-      return $this->exit("Data is missing.");
+      return null;
     }
 
     $json = json_decode($string, true);
 
     if (!$json) {
-      return $this->exit("Send data in JSON format.");
+      return null;
     }
 
     return $json;

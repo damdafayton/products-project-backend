@@ -6,8 +6,26 @@ use utils;
 
 const CONTROLLER_NAMESPACE = __NAMESPACE__;
 
-class BaseController extends HttpRequest implements interfaces\ControllerInterface
+class BaseController implements interfaces\ControllerInterface
 {
+  public $request;
+  public $response;
+
+  function __construct()
+  {
+    $this->request = new HttpRequest();
+    $this->response = new HttpResponse();
+  }
+
+  /**
+   * __call magic method.
+   */
+  function __call($name, $arguments)
+  {
+    $this->response
+      ->withStatus(404, "Not Found")
+      ->sendOutput(["caller" => $name, "error" => $arguments]);
+  }
 
   function index()
   {
@@ -18,7 +36,7 @@ class BaseController extends HttpRequest implements interfaces\ControllerInterfa
 
   function show()
   {
-    $id = $this->getPathId();
+    $id = $this->request->getPathId();
 
     $model = utils\controllerNameToModelName($this, CONTROLLER_NAMESPACE);
 
@@ -27,9 +45,13 @@ class BaseController extends HttpRequest implements interfaces\ControllerInterfa
 
   function massOperations()
   {
-    $massCommand = $this->getCustomMethod();
+    $massCommand = $this->request->getCustomMethod();
 
-    $body = $this->getParsedBody();
+    $body = $this->request->getParsedBody();
+
+    if (!$body) {
+      return $this->exit("Data is missing or corrupt.");
+    }
 
     $model = utils\controllerNameToModelName($this, CONTROLLER_NAMESPACE);
     $command  = utils\massCommandToSingularCommand($massCommand);

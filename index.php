@@ -3,7 +3,9 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 require_once dirname(__FILE__) . "/src/config/bootstrap.php";
 
-$request = new controller\BaseController();
+$base = new controller\BaseController();
+$request = $base->request;
+$response = $base->response;
 
 $query = $request->getUri()->getQuery();
 $customMethod = $request->getCustomMethod();

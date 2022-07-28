@@ -73,8 +73,12 @@ class ProductController extends BaseController implements interfaces\ControllerI
   function create()
   {
     try {
-      $body = $this->getParsedBody();
-      ['category' => $category] = $this->getParsedBody();
+      $body = $this->request->getParsedBody();
+      if (!$body) {
+        return $this->exit("Data is missing or corrupt.");
+      }
+
+      ['category' => $category] = $body;
 
       $model = utils\tableNameToModelName($category, 'model');
 
@@ -95,7 +99,7 @@ class ProductController extends BaseController implements interfaces\ControllerI
   {
     $Model = utils\controllerNameToModelName($this, CONTROLLER_NAMESPACE);
     // substr(get_class($this), 0, -10); // ProductController to Product
-    $queryList = $this->getQueryParams();
+    $queryList = $this->request->getQueryParams();
 
     if (array_key_exists('fields', $queryList)) {
       $fields = $Model::getFields($queryList['fields']);
