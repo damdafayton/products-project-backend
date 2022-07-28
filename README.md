@@ -40,9 +40,13 @@ All the data that is served on the front-end is provided from the back-end, henc
     - Furniture
     - Book
   - Seeding
-    
-- BaseController
-  - ProductController
+
+- CustomPsrUriInterface
+  - CustomPsrHttpResponseInterface
+  - CustomPsrHttpRequestInterface
+    - abstract HttpRequest implements CustomPsrHttpRequestInterface
+      - BaseController extends HttpRequest
+        - ProductController extends BaseController
 
 It is very easy to create a new category class.
 1) Special field traits are imported depending on the features of the product such as: size, weight, length etc...
