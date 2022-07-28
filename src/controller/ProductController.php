@@ -4,7 +4,7 @@ namespace controller;
 
 use utils;
 
-class ProductController extends BaseController
+class ProductController extends BaseController implements interfaces\ControllerInterface
 {
 
   function __construct()
@@ -17,7 +17,7 @@ class ProductController extends BaseController
     $allProducts = parent::index();
     // print_r($allProducts);
     $getPrivateFields = function ($product) {
-      $model = utils\controllerNameToModelName($this, __NAMESPACE__);
+      $model = utils\controllerNameToModelName($this, CONTROLLER_NAMESPACE);
       $returnArray =  ['product' => $product];
 
       $categoryTable = $product['category'];
@@ -93,7 +93,7 @@ class ProductController extends BaseController
 
   function handleQueries()
   {
-    $Model = utils\controllerNameToModelName($this, __NAMESPACE__);
+    $Model = utils\controllerNameToModelName($this, CONTROLLER_NAMESPACE);
     // substr(get_class($this), 0, -10); // ProductController to Product
     $queryList = $this->getQueryParams();
 

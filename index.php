@@ -24,14 +24,14 @@ if (class_exists($controllerClass)) {
       }
       break;
     case 'POST':
-      if ($customMethod) { // Check for mass operations
+      if ($customMethod) { // Check for batch operations
         $instance->massOperations();
         break;
       };
       $instance->create();
       break;
     default:
-      $instance->exit();
+      $instance->exit('Action couldn\'t found');
   };
 } else {
   $request->response->withStatus(404, "Not Found");
