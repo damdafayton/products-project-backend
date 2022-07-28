@@ -1,8 +1,8 @@
 <?php
 
-namespace controller;
+namespace controller\http;
 
-class Uri implements interfaces\CustomPsrUriInterface
+class Uri implements \controller\interfaces\CustomPsrUriInterface
 {
   protected $path;
   protected $query;

@@ -1,8 +1,8 @@
 <?php
 
-namespace controller;
+namespace controller\http;
 
-class HttpResponse implements interfaces\CustomPsrHttpResponseInterface
+class HttpResponse implements \controller\interfaces\CustomPsrHttpResponseInterface
 {
   protected $data;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace controller;
+namespace controller\http;
 
-class HttpRequest implements interfaces\CustomPsrHttpRequestInterface
+class HttpRequest implements \controller\interfaces\CustomPsrHttpRequestInterface
 {
   protected $requestMethod;
   protected $uri;
@@ -32,18 +32,6 @@ class HttpRequest implements interfaces\CustomPsrHttpRequestInterface
     $uriSegmentList = $this->getUriSegmentList();
     $lastPathExpoded = explode(':', $uriSegmentList[$this->apiNameSpacePath + 1]); // ['products, 'massOperation']
     return $lastPathExpoded[0];
-  }
-
-  function getControllerClassName()
-  {
-    $controllerPath = $this->getControllerPath();
-    $controllerName = substr(ucwords(strtolower(($controllerPath))), 0, -1) . 'Controller';
-
-    if ($controllerPath) {
-      $controllerName = '\\' . CONTROLLER_NAMESPACE . '\\' . $controllerName;
-    }
-
-    return $controllerName;
   }
 
   function getCustomMethod()

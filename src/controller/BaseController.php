@@ -13,8 +13,8 @@ class BaseController implements interfaces\ControllerInterface
 
   function __construct()
   {
-    $this->request = new HttpRequest();
-    $this->response = new HttpResponse();
+    $this->request = new http\HttpRequest();
+    $this->response = new http\HttpResponse();
   }
 
   /**
@@ -70,5 +70,59 @@ class BaseController implements interfaces\ControllerInterface
     }
 
     return $response;
+  }
+
+  function getControllerClassName()
+  {
+    $controllerPath = $this->request->getControllerPath();
+    $controllerName = substr(ucwords(strtolower(($controllerPath))), 0, -1) . 'Controller';
+
+    if ($controllerPath) {
+      $controllerName = '\\' . CONTROLLER_NAMESPACE . '\\' . $controllerName;
+    }
+
+    return $controllerName;
+  }
+
+  function get()
+  {
+    $controllerClass = $this->getControllerClassName();
+
+    if (!class_exists($controllerClass)) {
+      return $this->exit('Action not found');
+    }
+
+    $controllerInstance = new $controllerClass();
+
+    $pathId = $this->request->getPathId();
+    $query = $this->request->getUri()->getQuery();
+
+    if ($pathId) {
+      $controllerInstance->show();
+    } else if ($query) {
+      $controllerInstance->handleQueries();
+    } else {
+      $controllerInstance->index();
+    }
+  }
+
+  function post()
+  {
+    $controllerClass = $this->getControllerClassName();
+
+    if (!class_exists($controllerClass)) {
+      return $this->exit('Action not found');
+    }
+
+    $controllerInstance = new $controllerClass();
+
+    $customMethod = $this->request->getCustomMethod();
+
+    // Check for batch operations
+    if ($customMethod) {
+      $controllerInstance->massOperations();
+    } else {
+      $controllerInstance->create();
+    }
   }
 }
