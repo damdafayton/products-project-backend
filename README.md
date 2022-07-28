@@ -42,7 +42,7 @@ All the data that is served on the front-end is provided from the back-end, henc
       - BaseController
         - ProductController
 
-I have created `CustomPsr....Interface`s to gather together the methods I needed from PSR for setting up application. Since whole methods are not needes for such little functionality, I didn't implement the original interfaces.
+I have created `CustomPsr....Interface`s to gather together the methods I needed from PSR to build this application. Since all of the methods are not needed for such little functionality, I didn't implement the original interfaces.
 
 ### Model
 - abstract Database
