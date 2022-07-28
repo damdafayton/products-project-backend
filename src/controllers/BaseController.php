@@ -4,7 +4,7 @@ namespace controllers;
 
 use utils;
 
-abstract class BaseController
+abstract class BaseController implements \Psr\Http\Message\ServerRequestInterface
 {
   /**
    * __call magic method.
@@ -38,6 +38,10 @@ abstract class BaseController
 
     exit;
   }
+
+  // static function fromGlobals()
+  // {
+  // }
 
   /**
    * Get URI elements.
