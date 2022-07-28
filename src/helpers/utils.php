@@ -16,7 +16,7 @@ function removeNameSpace($string, $namespace)
 function controllerNameToModelName($thisOfController, $namespace = null)
 {
   // ProductController to Product
-  // controllers\ProductController to model\Product
+  // controller\ProductController to model\Product
 
   $modelClass = substr(get_class($thisOfController), 0, -10);
 

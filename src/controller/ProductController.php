@@ -1,15 +1,21 @@
 <?php
 
-namespace controllers;
+namespace controller;
 
 use utils;
 
 class ProductController extends BaseController
 {
+
+  function __construct()
+  {
+    parent::__construct();
+  }
+
   function index()
   {
     $allProducts = parent::index();
-
+    // print_r($allProducts);
     $getPrivateFields = function ($product) {
       $model = utils\controllerNameToModelName($this, __NAMESPACE__);
       $returnArray =  ['product' => $product];
@@ -28,7 +34,7 @@ class ProductController extends BaseController
 
         global $categoryFields;
         $categoryFields = $model::getFields($categoryTable)['categoryFields'];
-        // print_r($categoryFields);
+
         // Loop to convert ([weight] => 2.00) to ([weight] => [2.00, kg])
         foreach ($productSpecialFields as $key => $value) {
           $productSpecialFields[$key] = [$value, $categoryFields[$key]];
@@ -43,12 +49,12 @@ class ProductController extends BaseController
       return $returnArray;
     };
 
-    return $this->sendOutput(array_map($getPrivateFields, $allProducts));
+    return $this->response->sendOutput(array_map($getPrivateFields, $allProducts));
   }
 
-  function show($id)
+  function show()
   {
-    $queryResult = parent::show($id);
+    $queryResult = parent::show();
 
     // If product is found
     if ($queryResult['product_id'] > 0) {
@@ -58,7 +64,7 @@ class ProductController extends BaseController
 
       $modelInstance = new $Model($queryResult);
 
-      return $this->sendOutput($modelInstance->getAttributes());
+      return $this->response->sendOutput($modelInstance->getAttributes());
     } else {
       $this->exit('Id not found');
     }
@@ -67,18 +73,18 @@ class ProductController extends BaseController
   function create()
   {
     try {
-      $json = $this->parseJSON();
-      ['category' => $category] = $this->parseJSON();
+      $body = $this->getParsedBody();
+      ['category' => $category] = $this->getParsedBody();
 
       $model = utils\tableNameToModelName($category, 'model');
 
       if (class_exists($model)) {
-        $instance = new $model($json);
+        $instance = new $model($body);
         $result = $instance->create();
 
-        $this->sendOutput($result);
+        $this->response->sendOutput($result);
       } else {
-        $this->sendOutput(["error" => "Missing data!"]);
+        $this->exit("Missing data!");
       }
     } catch (\Exception $e) {
       // throw new Exception($e->getMessage());
@@ -89,18 +95,21 @@ class ProductController extends BaseController
   {
     $Model = utils\controllerNameToModelName($this, __NAMESPACE__);
     // substr(get_class($this), 0, -10); // ProductController to Product
-    $queryList = parent::getQueryStringParams();
+    $queryList = $this->getQueryParams();
 
     if (array_key_exists('fields', $queryList)) {
       $fields = $Model::getFields($queryList['fields']);
-      $this->sendOutput($fields);
+
+      $this->response->sendOutput($fields);
     }
   }
 
-  function massOperations($command)
+  function massOperations()
   {
-    $queryResult = parent::massOperations($command);
-
-    $this->sendOutput($queryResult);
+    $queryResult = parent::massOperations();
+    if (!$queryResult) {
+      return $this->response->withStatus(404);
+    }
+    $this->response->sendOutput($queryResult);
   }
 }
