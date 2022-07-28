@@ -36,8 +36,8 @@ All the data that is served on the front-end is provided from the back-end, henc
 
 ### Controller
 - CustomPsrUriInterface
-  - HttpRequest implements CustomPsrHttpResponseInterface
-  - HttpResponse implements CustomPsrHttpRequestInterface
+  - HttpRequest implements CustomPsrHttpRequestInterface
+  - HttpResponse implements CustomPsrHttpResponseInterface
 
 - BaseController implements ControllerInterface
   - ProductController
