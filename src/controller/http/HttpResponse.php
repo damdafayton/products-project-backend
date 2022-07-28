@@ -11,7 +11,9 @@ class HttpResponse implements \controller\interfaces\CustomPsrHttpResponseInterf
 
   function withHeader($name, $value)
   {
-    return clone $this->setHeader($name, $value);
+    $clone = clone $this;
+    $clone->setHeader($name, $value);
+    return $clone;
   }
 
   function setStatus($code = 200, $reasonPhrase = '')
@@ -21,7 +23,9 @@ class HttpResponse implements \controller\interfaces\CustomPsrHttpResponseInterf
 
   function withStatus($code = 200, $reasonPhrase = '')
   {
-    return clone $this->setStatus($code = 200, $reasonPhrase = '');
+    $clone = clone $this;
+    $clone->setStatus($code = 200, $reasonPhrase = '');
+    return $clone;
   }
 
   /**
