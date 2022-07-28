@@ -26,6 +26,7 @@ All the data that is served on the front-end is provided from the back-end, henc
 
 - POST `/api/products` => creates a product
 - POST `/api/products:massDelete` => deletes more than 1 product
+  - Mass delete action is implemented as a custom method through `POST` request because it needs access to more than 1 resource. Implementation is done according to guide from Google Cloud [here](https://cloud.google.com/apis/design/custom_methods).
 
 ## Database Structure
 
@@ -33,15 +34,23 @@ All the data that is served on the front-end is provided from the back-end, henc
 
 ## Class Structure
 
-- Database
+### Controller
+- CustomPsrUriInterface
+  - CustomPsrHttpResponseInterface
+  - CustomPsrHttpRequestInterface
+    - abstract HttpRequest
+      - BaseController
+        - ProductController
+
+I have created `CustomPsr....Interface`s to gather together the methods I needed from PSR to build this application. Since all of the methods are not needed for such little functionality, I didn't implement the original interfaces.
+
+### Model
+- abstract Database
   - Product
     - Dvd
     - Furniture
     - Book
   - Seeding
-    
-- BaseController
-  - ProductController
 
 It is very easy to create a new category class.
 1) Special field traits are imported depending on the features of the product such as: size, weight, length etc...
