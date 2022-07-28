@@ -38,13 +38,13 @@ abstract class HttpRequest implements interfaces\CustomPsrHttpRequestInterface
     $string = file_get_contents("php://input");
 
     if ($string === false) {
-      return $this->res->withStatus(404, "Send data in JSON format.");
+      return $this->response->withStatus(404, "Send data in JSON format.");
     }
 
     $json = json_decode($string, true);
 
     if (!$json) {
-      return $this->res->withStatus(404, "Data is missing.");
+      return $this->response->withStatus(404, "Data is missing.");
     }
 
     return $json;
