@@ -70,6 +70,10 @@ class BaseController implements interfaces\ControllerInterface
     return $response;
   }
 
+
+  // Gets the path like /products or /users and returns ProductController or UserController string
+  // @return string
+
   function getControllerClassName($req)
   {
     $controllerPath = $req->getControllerPath();
@@ -82,6 +86,8 @@ class BaseController implements interfaces\ControllerInterface
 
     return $controllerName;
   }
+
+  // @return controller instance
 
   function getController($req)
   {
