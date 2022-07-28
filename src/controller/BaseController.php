@@ -8,12 +8,10 @@ const CONTROLLER_NAMESPACE = __NAMESPACE__;
 
 class BaseController implements interfaces\ControllerInterface
 {
-  public $request;
   public $response;
 
   function __construct()
   {
-    $this->request = new http\HttpRequest();
     $this->response = new http\HttpResponse();
   }
 
@@ -27,27 +25,27 @@ class BaseController implements interfaces\ControllerInterface
       ->sendOutput(["caller" => $name, "error" => $arguments]);
   }
 
-  function index()
+  function index($req, $res)
   {
     $model = utils\controllerNameToModelName($this, CONTROLLER_NAMESPACE);
 
     return $model::all();
   }
 
-  function show()
+  function show($req, $res)
   {
-    $id = $this->request->getPathId();
+    $id = $req->getPathId();
 
     $model = utils\controllerNameToModelName($this, CONTROLLER_NAMESPACE);
 
     return $model::getById($id);
   }
 
-  function massOperations()
+  function massOperations($req, $res)
   {
-    $massCommand = $this->request->getCustomMethod();
+    $massCommand = $req->getCustomMethod();
 
-    $body = $this->request->getParsedBody();
+    $body = $req->getParsedBody();
 
     if (!$body) {
       return $this->exit("Data is missing or corrupt.");
@@ -72,21 +70,22 @@ class BaseController implements interfaces\ControllerInterface
     return $response;
   }
 
-  function getControllerClassName()
+  function getControllerClassName($req)
   {
-    $controllerPath = $this->request->getControllerPath();
+    $controllerPath = $req->getControllerPath();
+
     $controllerName = substr(ucwords(strtolower(($controllerPath))), 0, -1) . 'Controller';
 
-    if ($controllerPath) {
+    if (CONTROLLER_NAMESPACE) {
       $controllerName = '\\' . CONTROLLER_NAMESPACE . '\\' . $controllerName;
     }
 
     return $controllerName;
   }
 
-  function getController()
+  function getController($req)
   {
-    $controllerClass = $this->getControllerClassName();
+    $controllerClass = $this->getControllerClassName($req);
 
     if (!class_exists($controllerClass)) {
       return $this->exit('Action not found');
@@ -95,33 +94,33 @@ class BaseController implements interfaces\ControllerInterface
     return new $controllerClass();
   }
 
-  function get()
+  function get($req, $res)
   {
-    $controllerInstance = $this->getController();
+    $controllerInstance = $this->getController($req);
 
-    $pathId = $this->request->getPathId();
-    $query = $this->request->getUri()->getQuery();
+    $pathId = $req->getPathId();
+    $query = $req->getUri()->getQuery();
 
     if ($pathId) {
-      $controllerInstance->show();
+      $controllerInstance->show($req, $res);
     } else if ($query) {
-      $controllerInstance->handleQueries();
+      $controllerInstance->handleQueries($req, $res);
     } else {
-      $controllerInstance->index();
+      $controllerInstance->index($req, $res);
     }
   }
 
-  function post()
+  function post($req, $res)
   {
-    $controllerInstance = $this->getController();
+    $controllerInstance = $this->getController($req);
 
-    $customMethod = $this->request->getCustomMethod();
+    $customMethod = $req->getCustomMethod();
 
     // Check for batch operations
     if ($customMethod) {
-      $controllerInstance->massOperations();
+      $controllerInstance->massOperations($req, $res);
     } else {
-      $controllerInstance->create();
+      $controllerInstance->create($req, $res);
     }
   }
 }

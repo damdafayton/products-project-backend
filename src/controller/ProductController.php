@@ -12,9 +12,9 @@ class ProductController extends BaseController implements interfaces\ControllerI
     parent::__construct();
   }
 
-  function index()
+  function index($req, $res)
   {
-    $allProducts = parent::index();
+    $allProducts = parent::index($req, $res);
     // print_r($allProducts);
     $getPrivateFields = function ($product) {
       $model = utils\controllerNameToModelName($this, CONTROLLER_NAMESPACE);
@@ -49,12 +49,12 @@ class ProductController extends BaseController implements interfaces\ControllerI
       return $returnArray;
     };
 
-    return $this->response->sendOutput(array_map($getPrivateFields, $allProducts));
+    return $res->sendOutput(array_map($getPrivateFields, $allProducts));
   }
 
-  function show()
+  function show($req, $res)
   {
-    $queryResult = parent::show();
+    $queryResult = parent::show($req, $res);
 
     // If product is found
     if ($queryResult['product_id'] > 0) {
@@ -64,16 +64,16 @@ class ProductController extends BaseController implements interfaces\ControllerI
 
       $modelInstance = new $Model($queryResult);
 
-      return $this->response->sendOutput($modelInstance->getAttributes());
+      return $res->sendOutput($modelInstance->getAttributes());
     } else {
       $this->exit('Id not found');
     }
   }
 
-  function create()
+  function create($req, $res)
   {
     try {
-      $body = $this->request->getParsedBody();
+      $body = $req->getParsedBody();
       if (!$body) {
         return $this->exit("Data is missing or corrupt.");
       }
@@ -86,7 +86,7 @@ class ProductController extends BaseController implements interfaces\ControllerI
         $instance = new $model($body);
         $result = $instance->create();
 
-        $this->response->sendOutput($result);
+        $res->withStatus(201)->sendOutput($result);
       } else {
         $this->exit("Missing data!");
       }
@@ -95,25 +95,25 @@ class ProductController extends BaseController implements interfaces\ControllerI
     }
   }
 
-  function handleQueries()
+  function handleQueries($req, $res)
   {
     $Model = utils\controllerNameToModelName($this, CONTROLLER_NAMESPACE);
     // substr(get_class($this), 0, -10); // ProductController to Product
-    $queryList = $this->request->getQueryParams();
+    $queryList = $req->getQueryParams();
 
     if (array_key_exists('fields', $queryList)) {
       $fields = $Model::getFields($queryList['fields']);
 
-      $this->response->sendOutput($fields);
+      $res->sendOutput($fields);
     }
   }
 
-  function massOperations()
+  function massOperations($req, $res)
   {
-    $queryResult = parent::massOperations();
+    $queryResult = parent::massOperations($req, $res);
     if (!$queryResult) {
-      return $this->response->withStatus(404);
+      return $res->withStatus(404);
     }
-    $this->response->sendOutput($queryResult);
+    $res->withStatus(202)->sendOutput($queryResult);
   }
 }

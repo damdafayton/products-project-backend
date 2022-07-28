@@ -4,9 +4,9 @@ namespace controller\interfaces;
 
 interface ControllerInterface
 {
-  function index();
+  function index($req, $res);
 
-  function show();
+  function show($req, $res);
 
-  function massOperations();
+  function massOperations($req, $res);
 }

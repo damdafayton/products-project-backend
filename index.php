@@ -5,6 +5,9 @@ require_once dirname(__FILE__) . "/src/config/bootstrap.php";
 
 $app = new controller\BaseController();
 
-$method =  strtolower($app->request->getMethod());
+$req = new controller\http\HttpRequest();
+$res = new controller\http\HttpResponse();
 
-$app->$method();
+$method =  strtolower($req->getMethod());
+
+$app->$method($req, $res);
