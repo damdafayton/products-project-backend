@@ -37,19 +37,19 @@ abstract class HttpRequest implements interfaces\CustomPsrHttpRequestInterface
    * 
    * @return array
    */
-  public function getUriSegmentList()
+  function getUriSegmentList()
   {
     return explode('/', $this->getUri()->getPath()); // [ , test-scandiweb-products, index.php, api, products:massOperation]
   }
 
-  public function getControllerPath()
+  function getControllerPath()
   {
     $uriSegmentList = $this->getUriSegmentList();
     $lastPathExpoded = explode(':', $uriSegmentList[$this->apiNameSpacePath + 1]); // ['products, 'massOperation']
     return $lastPathExpoded[0];
   }
 
-  public function getControllerClassName()
+  function getControllerClassName()
   {
     $controllerPath = $this->getControllerPath();
     $controllerName = substr(ucwords(strtolower(($controllerPath))), 0, -1) . 'Controller';
@@ -61,7 +61,7 @@ abstract class HttpRequest implements interfaces\CustomPsrHttpRequestInterface
     return $controllerName;
   }
 
-  public function getCustomMethod()
+  function getCustomMethod()
   {
     $uriSegmentList = $this->getUriSegmentList();
     $lastPathExpoded = explode(':', $uriSegmentList[count($uriSegmentList) - 1]); // ['products, 'massOperation']
@@ -69,7 +69,7 @@ abstract class HttpRequest implements interfaces\CustomPsrHttpRequestInterface
     return isset($lastPathExpoded[1]) ? $lastPathExpoded[1] : null;
   }
 
-  public function getPathId()
+  function getPathId()
   {
     $id = null;
     $apiPath = $this->apiNameSpacePath;
@@ -93,7 +93,7 @@ abstract class HttpRequest implements interfaces\CustomPsrHttpRequestInterface
     return $this->uri;
   }
 
-  public function getQueryParams()
+  function getQueryParams()
   {
     parse_str($this->getUri()->getQuery(), $queryList);
     return $queryList;
