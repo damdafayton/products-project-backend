@@ -6,13 +6,6 @@ use utils;
 
 class ProductController extends BaseController implements interfaces\ControllerInterface
 {
-
-  function __construct()
-  {
-    // We do this to enable magic _call method;
-    parent::__construct();
-  }
-
   function index($req, $res)
   {
     $allProducts = parent::index($req, $res);

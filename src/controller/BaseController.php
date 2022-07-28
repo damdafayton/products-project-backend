@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Base controller queries database and return the query result.
+ * It doesnt send response unless request is unsuccessfull. 
+ * In that case I use exit() method to fallback to __call().
+ */
+
 namespace controller;
 
 use utils;
@@ -8,19 +14,13 @@ const CONTROLLER_NAMESPACE = __NAMESPACE__;
 
 class BaseController implements interfaces\ControllerInterface
 {
-  public $response;
-
-  function __construct()
-  {
-    $this->response = new http\HttpResponse();
-  }
-
   /**
    * __call magic method.
    */
   function __call($name, $arguments)
   {
-    $this->response
+    $res = new http\HttpResponse();
+    $res
       ->withStatus(404, "Not Found")
       ->sendOutput(["caller" => $name, "error" => $arguments]);
   }
