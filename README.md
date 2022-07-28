@@ -34,6 +34,7 @@ All the data that is served on the front-end is provided from the back-end, henc
 
 ## Class Structure
 
+### Model
 - abstract Database
   - Product
     - Dvd
@@ -41,6 +42,7 @@ All the data that is served on the front-end is provided from the back-end, henc
     - Book
   - Seeding
 
+### Controller
 - CustomPsrUriInterface
   - CustomPsrHttpResponseInterface
   - CustomPsrHttpRequestInterface
