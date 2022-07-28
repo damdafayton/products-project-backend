@@ -1,6 +1,6 @@
 <?php
 
-namespace utils;
+namespace utils\product;
 
 global $fieldMergeGroups;
 // Attributes defined in "values" will be merged under the name of "key"

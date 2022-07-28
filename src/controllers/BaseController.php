@@ -63,25 +63,7 @@ abstract class BaseController
     return $queryList;
   }
 
-  protected function index()
-  {
-    $model = utils\controllerNameToModelName($this, __NAMESPACE__);
-
-    $queryResult = $model::all();
-
-    return $queryResult;
-  }
-
-  protected function show($id)
-  {
-    $model = utils\controllerNameToModelName($this, __NAMESPACE__);
-
-    $instance = $model::getById($id);
-
-    return $instance;
-  }
-
-  protected function massOperations($command)
+  protected function parseJSON()
   {
     $string = file_get_contents("php://input");
 
@@ -92,13 +74,46 @@ abstract class BaseController
     $json = json_decode($string, true);
 
     if (!$json) {
-      return $this->exit("Send some data");
+      return $this->exit("Data is missing.");
+    }
+
+    return $json;
+  }
+
+  protected function index()
+  {
+    $model = utils\controllerNameToModelName($this, __NAMESPACE__);
+
+    return $model::all();
+  }
+
+  protected function show($id)
+  {
+    $model = utils\controllerNameToModelName($this, __NAMESPACE__);
+
+    return $model::getById($id);
+  }
+
+  protected function massOperations($massCommand)
+  {
+    $json = $this->parseJSON();
+
+    $model = utils\controllerNameToModelName($this, __NAMESPACE__);
+    $command  = utils\massCommandToSingularCommand($massCommand);
+
+    if (!method_exists($model, $command)) {
+      return $this->exit("Mass operation is not available.");
     }
 
     ['list' => $list] = $json;
+    $list = json_decode($list);
 
-    $model = utils\controllerNameToModelName($this, __NAMESPACE__);
+    $response = null;
 
-    return $model::$command(json_decode($list));
+    foreach ($list as $item) {
+      $response = $model::$command($item);
+    }
+
+    return $response;
   }
 }

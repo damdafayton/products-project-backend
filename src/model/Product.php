@@ -55,11 +55,11 @@ abstract class Product extends Database
     ", ['ssdss', $sku, $name, $price, $category, $description]);
 
     ['insert_id' => $insert_id, 'error' => $error] = $stmtResult;
+
     if ($insert_id) {
       $this->product_id = $insert_id;
       return $insert_id;
-    } else if ($error) {
-      // Handle error notifications.
+    } else {
       return $error;
     }
   }
@@ -71,41 +71,7 @@ abstract class Product extends Database
   {
     $_mainTable = utils\modelNameToTableName(__CLASS__, __NAMESPACE__);
 
-    $allProducts =  self::select("SELECT * FROM $_mainTable ORDER BY product_id");
-
-    $getPrivateFields = function ($product) {
-      $returnArray =  ['product' => $product];
-
-      $categoryTable = $product['category'];
-      $productId = $product['product_id'];
-
-      // Get fields from category specific table
-      $productSpecialFields = self::select("SELECT * from $categoryTable WHERE product_id = ?", ['s', $productId]);
-
-      if (count($productSpecialFields) > 0) {
-        // Remove id fields and leave only special fields such as: size, weight, etc..
-        $productSpecialFields = array_filter($productSpecialFields[0], function ($field) {
-          return $field !== 'id' && $field !== 'product_id';
-        }, ARRAY_FILTER_USE_KEY);
-
-        global $categoryFields;
-        $categoryFields = self::getFields($categoryTable)['categoryFields'];
-
-        // Loop to convert ([weight] => 2.00) to ([weight] => [2.00, kg])
-        foreach ($productSpecialFields as $key => $value) {
-          $productSpecialFields[$key] = [$value, $categoryFields[$key]];
-        }
-
-        // Check if product has dimensions
-        $productSpecialFields = utils\joinFields($productSpecialFields);
-
-        $returnArray['productSpecialFields'] = $productSpecialFields;
-      }
-
-      return $returnArray;
-    };
-
-    return array_map($getPrivateFields, $allProducts);
+    return self::select("SELECT * FROM $_mainTable ORDER BY product_id");
   }
 
   static function getById($id)
@@ -113,7 +79,7 @@ abstract class Product extends Database
   {
     $_mainTable = utils\modelNameToTableName(__CLASS__, __NAMESPACE__);
 
-    $sqlQueryResult =  self::executeMultiQuery(
+    return self::executeMultiQuery(
       "
           SET @category_table_name:= (SELECT category FROM $_mainTable where product_id = $id);
           SET @sql:= CONCAT('SELECT * FROM $_mainTable LEFT JOIN ', @category_table_name,' ON products.product_id = ', @category_table_name, '.product_id', ' WHERE products.product_id = $id');
@@ -121,42 +87,37 @@ abstract class Product extends Database
           EXECUTE dynamic_statement;
           DEALLOCATE PREPARE dynamic_statement;"
     );
-
-    if ($sqlQueryResult['product_id'] > 0) {
-      $category = $sqlQueryResult['category'];
-
-      $Model = utils\tableNameToModelName($category, 'model');
-
-      $modelInstance = new $Model($sqlQueryResult);
-      return $modelInstance;
-    } else {
-      return null;
-    }
   }
 
-  static function massDelete($productListToDelete = [])
+  static function delete($productId)
   {
     $_mainTable = utils\modelNameToTableName(__CLASS__, __NAMESPACE__);
 
-    $response = null; // set before in case empty list is provided
-    foreach ($productListToDelete as $productId) {
-      $query = "
-        SET @category_table_name:= (SELECT category FROM $_mainTable where product_id = $productId);
-        SET @sql:= CONCAT('DELETE FROM ', @category_table_name,' WHERE product_id = $productId');
-        PREPARE dynamic_statement FROM @sql;
-        EXECUTE dynamic_statement;
-        DEALLOCATE PREPARE dynamic_statement;
-        DELETE FROM $_mainTable WHERE product_id = $productId; 
-        ";
-      $response = self::executeMultiQuery($query);
-    }
-    return $response;
+    $query = "
+    SET @category_table_name:= (SELECT category FROM $_mainTable where product_id = $productId);
+    SET @sql:= CONCAT('DELETE FROM ', @category_table_name,' WHERE product_id = $productId');
+    PREPARE dynamic_statement FROM @sql;
+    EXECUTE dynamic_statement;
+    DEALLOCATE PREPARE dynamic_statement;
+    DELETE FROM $_mainTable WHERE product_id = $productId; 
+    ";
+
+    return self::executeMultiQuery($query);
   }
 
-
+  static function queryIdFromCategoryTable($categoryTable, $productId)
+  {
+    return self::select("SELECT * from $categoryTable WHERE product_id = ?", ['s', $productId]);
+  }
 
   static function getFields($category = null)
   {
+    /*  IF CATEGORY IS NOT GIVEN IT RETURNS THE CATEGORY LIST
+    *   If category is given as an argument, it returns the fields and field types
+    *   Data comes from Comment part of mySql table
+    *   Array ( [weight] => kg)
+    *   @return array()
+    */
 
     $tableName = utils\modelNameToTableName(__CLASS__, __NAMESPACE__);
 
@@ -168,12 +129,6 @@ abstract class Product extends Database
     };
 
     if ($category) {
-      /* If category is given as an argument, it returns the fields and field types
-      * Data comes from Comment part of mySql table
-      * Array ( [weight] => kg)
-      * @return array()
-      */
-
       $query = "SHOW FULL COLUMNS FROM $category";
       $showColumns = self::select($query);
 
@@ -185,7 +140,6 @@ abstract class Product extends Database
 
       return ['categoryFields' => $categoryFields];
     } else {
-      // IF CATEGORY IS NOT GIVEN RETURN THE CATEOGRY LIST
       $query = "SHOW COLUMNS FROM $tableName";
       $showColumns = self::select($query);
 

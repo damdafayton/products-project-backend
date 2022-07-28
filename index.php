@@ -28,8 +28,8 @@ if (isset($uriSegmentList[$apiPath + 2])) {
   $id = $uriSegmentList[$apiPath + 2];
 }
 
-// Check if we have the corresponding Model and Contoller Classes
-if (class_exists($model) && class_exists($controller)) {
+// Check if we have the corresponding Contoller Classes
+if (class_exists($controller)) {
   $instance = new $controller();
   switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':

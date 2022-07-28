@@ -2,6 +2,12 @@
 
 namespace utils;
 
+function massCommandToSingularCommand($massCommand)
+{
+  $command = str_replace('mass', '', $massCommand);
+  return strtolower($command);
+}
+
 function removeNameSpace($string, $namespace)
 {
   return str_replace($namespace . '\\', '', $string);

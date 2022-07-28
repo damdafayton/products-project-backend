@@ -6,40 +6,75 @@ use utils;
 
 class ProductController extends BaseController
 {
-
   function index()
   {
-    $queryResult = parent::index();
+    $allProducts = parent::index();
 
-    $this->sendOutput($queryResult);
+    $getPrivateFields = function ($product) {
+      $model = utils\controllerNameToModelName($this, __NAMESPACE__);
+      $returnArray =  ['product' => $product];
+
+      $categoryTable = $product['category'];
+      $productId = $product['product_id'];
+
+      // Get fields from category specific table
+      $productSpecialFields = $model::queryIdFromCategoryTable($categoryTable, $productId);
+
+      if (count($productSpecialFields) > 0) {
+        // Remove id fields and leave only special fields such as: size, weight, etc..
+        $productSpecialFields = array_filter($productSpecialFields[0], function ($field) {
+          return $field !== 'id' && $field !== 'product_id';
+        }, ARRAY_FILTER_USE_KEY);
+
+        global $categoryFields;
+        $categoryFields = $model::getFields($categoryTable)['categoryFields'];
+        // print_r($categoryFields);
+        // Loop to convert ([weight] => 2.00) to ([weight] => [2.00, kg])
+        foreach ($productSpecialFields as $key => $value) {
+          $productSpecialFields[$key] = [$value, $categoryFields[$key]];
+        }
+
+        // Check if product has dimensions or other mergeable attributes
+        $productSpecialFields = utils\product\joinFields($productSpecialFields);
+
+        $returnArray['productSpecialFields'] = $productSpecialFields;
+      }
+
+      return $returnArray;
+    };
+
+    return $this->sendOutput(array_map($getPrivateFields, $allProducts));
   }
 
   function show($id)
   {
-    $instance = parent::show($id);
+    $queryResult = parent::show($id);
 
-    if ($instance) {
-      $this->sendOutput($instance->getAttributes());
+    // If product is found
+    if ($queryResult['product_id'] > 0) {
+      $category = $queryResult['category'];
+
+      $Model = utils\tableNameToModelName($category, 'model');
+
+      $modelInstance = new $Model($queryResult);
+
+      return $this->sendOutput($modelInstance->getAttributes());
     } else {
-      $this->exit();
+      $this->exit('Id not found');
     }
   }
 
   function create()
   {
     try {
-      $string = file_get_contents("php://input");
-      if ($string === false) {
-        $this->sendOutput(["error" => "Send data in JSON format."]);
-      }
-      $json = json_decode($string, true);
-      ['category' => $category] = $json;
-      $Model = utils\tableNameToModelName($category, 'model');
-      // echo $Model;
+      $json = $this->parseJSON();
+      ['category' => $category] = $this->parseJSON();
 
-      if (class_exists($Model)) {
-        $newEntry = new $Model($json);
-        $result = $newEntry->create();
+      $model = utils\tableNameToModelName($category, 'model');
+
+      if (class_exists($model)) {
+        $instance = new $model($json);
+        $result = $instance->create();
 
         $this->sendOutput($result);
       } else {
@@ -64,7 +99,8 @@ class ProductController extends BaseController
 
   function massOperations($command)
   {
-    $result = parent::massOperations($command);
-    $this->sendOutput($result);
+    $queryResult = parent::massOperations($command);
+
+    $this->sendOutput($queryResult);
   }
 }
