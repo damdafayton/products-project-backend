@@ -36,11 +36,11 @@ All the data that is served on the front-end is provided from the back-end, henc
 
 ### Controller
 - CustomPsrUriInterface
-  - CustomPsrHttpResponseInterface
-  - CustomPsrHttpRequestInterface
-    - abstract HttpRequest
-      - BaseController
-        - ProductController
+  - HttpRequest implements CustomPsrHttpResponseInterface
+  - HttpResponse implements CustomPsrHttpRequestInterface
+
+- BaseController implements ControllerInterface
+  - ProductController
 
 I have created `CustomPsr....Interface`s to gather together the methods I needed from PSR to build this application. Since all of the methods are not needed for such little functionality, I didn't implement the original interfaces.
 
