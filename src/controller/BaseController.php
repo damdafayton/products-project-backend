@@ -84,7 +84,7 @@ class BaseController implements interfaces\ControllerInterface
     return $controllerName;
   }
 
-  function get()
+  function getController()
   {
     $controllerClass = $this->getControllerClassName();
 
@@ -92,7 +92,12 @@ class BaseController implements interfaces\ControllerInterface
       return $this->exit('Action not found');
     }
 
-    $controllerInstance = new $controllerClass();
+    return new $controllerClass();
+  }
+
+  function get()
+  {
+    $controllerInstance = $this->getController();
 
     $pathId = $this->request->getPathId();
     $query = $this->request->getUri()->getQuery();
@@ -108,13 +113,7 @@ class BaseController implements interfaces\ControllerInterface
 
   function post()
   {
-    $controllerClass = $this->getControllerClassName();
-
-    if (!class_exists($controllerClass)) {
-      return $this->exit('Action not found');
-    }
-
-    $controllerInstance = new $controllerClass();
+    $controllerInstance = $this->getController();
 
     $customMethod = $this->request->getCustomMethod();
 
