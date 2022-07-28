@@ -62,7 +62,7 @@ Here is an example.
 class Dvd extends Product
 {
   use Size;
-  use ChildMethods;
+  use ProductChildMethods;
   private $privateFields = ['size'];
   private $privateFieldDataTypes = 'i';
 }
