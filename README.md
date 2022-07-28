@@ -26,6 +26,7 @@ All the data that is served on the front-end is provided from the back-end, henc
 
 - POST `/api/products` => creates a product
 - POST `/api/products:massDelete` => deletes more than 1 product
+  - Mass delete action is implemented through `POST` request because it needs access to more than 1 resource. Implementation is done according to guide from Google Cloud [here](https://cloud.google.com/apis/design/custom_methods).
 
 ## Database Structure
 
