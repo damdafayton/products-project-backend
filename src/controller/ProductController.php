@@ -80,9 +80,11 @@ class ProductController extends BaseController implements interfaces\ControllerI
         $instance = new $model($body);
         $result = $instance->create();
 
-        $res->withStatus(201)->sendOutput($result);
+        if($result['product_id']){
+          $res->withStatus(201);
+        }
       } else {
-        $this->exit("Missing data!");
+        $this->exit();
       }
     } catch (\Exception $e) {
       // throw new Exception($e->getMessage());
