@@ -105,9 +105,11 @@ class ProductController extends BaseController implements interfaces\ControllerI
   function massOperations($req, $res)
   {
     $queryResult = parent::massOperations($req, $res);
-    if (!$queryResult) {
+    
+    if ($queryResult['affected_rows']>0){
+      $res->withStatus(202);
+    } else{
       return $res->withStatus(404);
     }
-    $res->withStatus(202)->sendOutput($queryResult);
   }
 }

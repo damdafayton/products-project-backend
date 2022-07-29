@@ -6,6 +6,7 @@ class HttpResponse implements \controller\interfaces\CustomPsrHttpResponseInterf
 {
   function setHeader($name, $value)
   {
+    header("Access-Control-Allow-Origin: *");
     header("$name: $value");
   }
 
@@ -18,13 +19,14 @@ class HttpResponse implements \controller\interfaces\CustomPsrHttpResponseInterf
 
   function setStatus($code = 200, $reasonPhrase = '')
   {
+    header("Access-Control-Allow-Origin: *");
     header("HTTP/1.1 $code $reasonPhrase");
   }
 
   function withStatus($code = 200, $reasonPhrase = '')
   {
     $clone = clone $this;
-    $clone->setStatus($code = 200, $reasonPhrase = '');
+    $clone->setStatus($code, $reasonPhrase = '');
     return $clone;
   }
 

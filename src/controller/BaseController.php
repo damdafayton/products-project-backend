@@ -20,6 +20,7 @@ class BaseController implements interfaces\ControllerInterface
   function __call($name, $arguments)
   {
     $res = new http\HttpResponse();
+
     $res
       ->withStatus(404, "Not Found")
       ->sendOutput(["caller" => $name, "error" => $arguments]);
@@ -60,11 +61,12 @@ class BaseController implements interfaces\ControllerInterface
 
     ['list' => $list] = $body;
     $list = json_decode($list);
-
+    
     $response = null;
 
     foreach ($list as $item) {
       $response = $model::$command($item);
+
     }
 
     return $response;
