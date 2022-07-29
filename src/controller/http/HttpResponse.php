@@ -37,7 +37,7 @@ class HttpResponse implements \controller\interfaces\CustomPsrHttpResponseInterf
   function sendOutput($data = null)
   {
     $uri = $_SERVER['HTTP_HOST'];
-
+    echo $uri;
     foreach (CORS_ALLLOWED_CLIENTS as $client) {
       preg_match('/' . $client . '/', $uri, $matches);
 
