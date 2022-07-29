@@ -38,8 +38,8 @@ class HttpResponse implements \controller\interfaces\CustomPsrHttpResponseInterf
   {
     $host = $_SERVER['HTTP_HOST'];
 
-    if ($host == CORS_SERVER_CLIENT_PAIR[0]) {
-      $uri = CORS_SERVER_CLIENT_PAIR[1];
+    if ($host == CORS['HOST']) {
+      $uri = CORS['REQUEST_ORIGIN'];
       header("Access-Control-Allow-Origin: ${uri}");
     }
 
