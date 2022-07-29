@@ -3,7 +3,7 @@
 $isServerRunninngOnLocal = $_SERVER['SERVER_NAME'] == 'localhost';
 define("RUNNING_ON_LOCAL", $isServerRunninngOnLocal);
 
-const CORS_ALLLOWED_CLIENT = "https://damdafayton.github.io/";
+const CORS_ALLLOWED_CLIENTS = ["damdafayton.github.io", "localhost"];
 
 const DB_HOST = "localhost";
 const DB_USERNAME = "root";
