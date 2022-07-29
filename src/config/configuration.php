@@ -3,7 +3,8 @@
 $isServerRunninngOnLocal = $_SERVER['SERVER_NAME'] == 'localhost';
 define("RUNNING_ON_LOCAL", $isServerRunninngOnLocal);
 
-const CORS_ALLLOWED_CLIENTS = ["damdafayton.github.io", "localhost"];
+const CORS_SERVER_CLIENT_PAIR =
+["products-listing-demo.herokuapp.com", "damdafayton.github.io"];
 
 const DB_HOST = "localhost";
 const DB_USERNAME = "root";
