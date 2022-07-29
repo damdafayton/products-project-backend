@@ -36,7 +36,9 @@ class HttpResponse implements \controller\interfaces\CustomPsrHttpResponseInterf
    */
   function sendOutput($data = null)
   {
+    $allowedClient = CORS_ALLLOWED_CLIENT;
     header("Content-Type: application/json; charset=UTF-8");
+    header("Access-Control-Allow-Origin: ${allowedClient}");
 
     echo json_encode($data);
 
