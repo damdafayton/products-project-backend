@@ -80,7 +80,7 @@ class ProductController extends BaseController implements interfaces\ControllerI
         $instance = new $model($body);
         $result = $instance->create();
 
-        if($result['product_id']){
+        if ($result['product_id']) {
           $res->withStatus(201);
         }
       } else {
@@ -107,10 +107,10 @@ class ProductController extends BaseController implements interfaces\ControllerI
   function massOperations($req, $res)
   {
     $queryResult = parent::massOperations($req, $res);
-    
-    if ($queryResult['affected_rows']>0){
+
+    if ($queryResult['affected_rows'] > 0) {
       $res->withStatus(202);
-    } else{
+    } else {
       return $res->withStatus(404);
     }
   }

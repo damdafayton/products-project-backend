@@ -61,12 +61,11 @@ class BaseController implements interfaces\ControllerInterface
 
     ['list' => $list] = $body;
     $list = json_decode($list);
-    
+
     $response = null;
 
     foreach ($list as $item) {
       $response = $model::$command($item);
-
     }
 
     return $response;
